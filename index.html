@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#0F0D0B" />
-  <title>For You</title>
+  <title>For Hafsah</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,389 +35,324 @@
 
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="bg-ink text-cream font-sans antialiased overflow-x-hidden">
+<body class="bg-ink text-cream font-sans antialiased">
 
-  <!-- Loading screen -->
-  <div id="loader" class="fixed inset-0 z-[100] flex items-center justify-center bg-inkDeep transition-opacity duration-1000">
-    <div class="loader-orb"></div>
+  <!-- ════════════════════ ATMOSPHERE LAYERS ════════════════════ -->
+  <canvas id="sky" class="fixed inset-0 pointer-events-none z-[1]"></canvas>
+  <div class="grain"></div>
+  <div class="vignette"></div>
+
+  <!-- ════════════════════ ENTRY GATE (initial) ════════════════════ -->
+  <div id="entry-gate" class="fixed inset-0 z-[100] flex items-center justify-center px-6">
+    <div class="entry-content text-center max-w-sm w-full">
+      <div class="entry-orb mb-10"></div>
+
+      <p class="font-sans text-[10px] tracking-[0.5em] uppercase text-gold/70 mb-3">
+        For Hafsah
+      </p>
+      <h1 class="font-serif italic text-3xl sm:text-4xl text-cream leading-snug mb-6">
+        Some moments<br/>are quieter in close.
+      </h1>
+      <div class="flex items-center justify-center gap-3 mb-10 text-muted">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+        </svg>
+        <span class="font-sans text-sm tracking-wide">Best with headphones</span>
+      </div>
+
+      <button id="entry-start" class="entry-btn group">
+        <span class="entry-btn-glow"></span>
+        <span class="entry-btn-inner">
+          <span class="font-serif italic text-base">I'm wearing them</span>
+          <svg class="w-4 h-4 ml-2 transition-transform duration-500 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M5 12h14M13 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </button>
+
+      <button id="entry-silent" class="mt-6 text-xs tracking-[0.25em] uppercase text-muted/70 hover:text-muted transition-colors">
+        Continue without sound
+      </button>
+    </div>
   </div>
 
-  <!-- Ambient music is generated procedurally via Web Audio API in script.js
-       (calm solo piano, Fmaj7add9 palette, never-repeating). -->
-
+  <!-- ════════════════════ AUDIO TOGGLE ════════════════════ -->
   <button id="audio-toggle" class="fixed top-5 right-5 sm:top-7 sm:right-7 z-50 w-11 h-11 rounded-full backdrop-blur-md bg-white/[0.04] border border-white/10 flex items-center justify-center text-muted hover:text-cream transition-all duration-500 opacity-0" aria-label="Toggle ambient sound">
-    <svg id="icon-muted" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <svg id="icon-muted" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M11 5L6 9H2v6h4l5 4V5z"/>
       <line x1="23" y1="9" x2="17" y2="15"/>
       <line x1="17" y1="9" x2="23" y2="15"/>
     </svg>
-    <svg id="icon-playing" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <svg id="icon-playing" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M11 5L6 9H2v6h4l5 4V5z"/>
       <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
       <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
     </svg>
   </button>
 
-  <!-- Particle canvas -->
-  <canvas id="particles" class="fixed inset-0 pointer-events-none z-[1]"></canvas>
+  <!-- ════════════════════ PROGRESS INDICATOR ════════════════════ -->
+  <div id="progress" class="fixed top-0 left-0 right-0 z-40 h-[2px] bg-white/[0.04] opacity-0 transition-opacity duration-1000">
+    <div id="progress-fill" class="h-full bg-gradient-to-r from-gold/40 via-gold to-gold/40 w-0 transition-all duration-300"></div>
+  </div>
 
-  <!-- Grain overlay -->
-  <div class="grain"></div>
+  <!-- ════════════════════ TAP HINT ════════════════════ -->
+  <div id="tap-hint" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 opacity-0 pointer-events-none transition-opacity duration-1000 text-center">
+    <p class="font-sans text-[10px] tracking-[0.4em] uppercase text-muted/60">tap to continue</p>
+  </div>
 
-  <main class="relative z-10">
+  <!-- ════════════════════ SLIDE STAGE ════════════════════ -->
+  <main id="stage" class="fixed inset-0 z-10">
 
-    <!-- ════════════════════ SECTION 1 — OPENING ════════════════════ -->
-    <section class="hero relative min-h-[100svh] flex items-center justify-center overflow-hidden">
-      <div class="hero-bg absolute inset-0">
-        <div class="hero-photo absolute inset-0 bg-center bg-cover" style="background-image: url('assets/images/hero.jpg');"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-inkDeep/80 via-ink/85 to-ink"></div>
-        <div class="absolute inset-0 bg-radial-warm"></div>
-      </div>
-
-      <div class="relative z-10 px-6 max-w-2xl mx-auto text-center">
-        <p class="hero-line opacity-0 font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed" style="--d: 1.2s">
+    <!-- ─── SLIDE 1: Hero / Opening ─── -->
+    <section class="slide" data-duration="18000">
+      <div class="slide-bg" data-image="assets/images/hero.jpg" data-blur="14"></div>
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed" data-reveal-at="1200">
           Some love stories begin with ease.
         </p>
-        <p class="hero-line opacity-0 font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed mt-10" style="--d: 5s">
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed mt-10" data-reveal-at="4800">
           Ours survived storms.
         </p>
-        <p class="hero-line opacity-0 font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed mt-10" style="--d: 9s">
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed mt-10" data-reveal-at="8500">
           And somehow…
         </p>
-        <p class="hero-line opacity-0 font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed mt-4" style="--d: 11s">
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed mt-3" data-reveal-at="10500">
           we still chose each other.
         </p>
-
-        <div class="hero-final opacity-0 mt-20" style="--d: 14s">
-          <div class="w-12 h-px bg-gold/60 mx-auto mb-8"></div>
-          <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl text-cream tracking-wide">
-            Happy Birthday
-          </h1>
-          <p class="mt-4 font-sans text-xs sm:text-sm tracking-[0.3em] uppercase text-gold/80">
-            My love
-          </p>
-        </div>
-      </div>
-
-      <div class="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0" style="--d: 17s">
-        <div class="flex flex-col items-center gap-3">
-          <span class="text-[10px] tracking-[0.4em] uppercase text-muted/70">Scroll</span>
-          <div class="w-px h-10 bg-gradient-to-b from-muted/60 to-transparent"></div>
+        <div class="reveal-text mt-14" data-reveal-at="13500">
+          <div class="ornament-line mx-auto mb-6"></div>
+          <h1 class="font-serif text-4xl sm:text-5xl text-cream tracking-wide">Happy Birthday</h1>
+          <p class="mt-3 font-serif italic text-xl text-gold/90">Hafsah</p>
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════ SECTION 2 — OUR STORY ════════════════════ -->
-    <section class="story-section relative py-40 sm:py-56 px-6">
-      <div class="max-w-2xl mx-auto text-center space-y-32 sm:space-y-40">
-
-        <div>
-          <p class="reveal font-serif text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed">
-            Our story was never easy.
-          </p>
-        </div>
-
-        <div class="space-y-8">
-          <p class="reveal font-serif italic text-xl sm:text-2xl text-warm leading-relaxed">
-            People doubted us.
-          </p>
-          <p class="reveal font-serif italic text-xl sm:text-2xl text-warm leading-relaxed" data-delay="400">
-            People tried to separate us.
-          </p>
-        </div>
-
-        <div class="space-y-6">
-          <p class="reveal font-serif text-xl sm:text-2xl text-warm leading-relaxed">
-            There was a time when you were already my wife…
-          </p>
-          <p class="reveal font-serif italic text-xl sm:text-2xl text-cream leading-relaxed" data-delay="500">
-            but I could not even speak to you.
-          </p>
-        </div>
-
-        <div class="space-y-4">
-          <p class="reveal font-serif text-2xl sm:text-3xl text-cream leading-relaxed">
-            A whole year passed.
-          </p>
-          <p class="reveal font-sans text-base sm:text-lg text-muted tracking-wide" data-delay="300">No calls.</p>
-          <p class="reveal font-sans text-base sm:text-lg text-muted tracking-wide" data-delay="600">No messages.</p>
-          <p class="reveal font-sans text-base sm:text-lg text-muted tracking-wide" data-delay="900">No way to know if you were okay.</p>
-        </div>
-
-        <div>
-          <div class="reveal w-10 h-px bg-gold/40 mx-auto mb-10"></div>
-          <p class="reveal font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-delay="300">
-            But even distance could not break what Allah had written.
-          </p>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ════════════════════ SECTION 3 — HER SACRIFICES ════════════════════ -->
-    <section class="sacrifices relative py-32 sm:py-48 px-6 bg-gradient-to-b from-ink via-surface/40 to-ink">
-      <div class="max-w-4xl mx-auto">
-        <div class="text-center mb-20 sm:mb-28">
-          <p class="reveal font-sans text-xs sm:text-sm tracking-[0.4em] uppercase text-gold/70 mb-4">
-            What you carried
-          </p>
-          <h2 class="reveal font-serif text-3xl sm:text-4xl md:text-5xl text-cream leading-tight" data-delay="200">
-            You stayed.
-          </h2>
-        </div>
-
-        <div class="space-y-6 sm:space-y-8">
-          <div class="reveal sacrifice-card">
-            <p class="font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed">
-              You suffered in silence.
-            </p>
-          </div>
-          <div class="reveal sacrifice-card" data-delay="200">
-            <p class="font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed">
-              You were hurt for choosing me.
-            </p>
-          </div>
-          <div class="reveal sacrifice-card" data-delay="400">
-            <p class="font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed">
-              You carried pain that nobody should have carried alone.
-            </p>
-          </div>
-        </div>
-
-        <div class="text-center mt-24 space-y-4">
-          <p class="reveal font-serif text-xl sm:text-2xl md:text-3xl text-muted leading-relaxed">
-            And still…
-          </p>
-          <p class="reveal font-serif italic text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed" data-delay="400">
-            you never let go of us.
-          </p>
-        </div>
-
-        <div class="text-center mt-32 max-w-xl mx-auto space-y-6">
-          <p class="reveal font-serif text-lg sm:text-xl text-warm leading-relaxed">
-            I know our wedding was not the way you deserved.
-          </p>
-          <p class="reveal font-serif text-lg sm:text-xl text-warm leading-relaxed" data-delay="400">
-            I know there were moments where you felt alone.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════ SECTION 4 — LOVE DURING HARD TIMES ════════════════════ -->
-    <section class="hardtimes relative py-32 sm:py-48 px-6 overflow-hidden">
-      <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 md:gap-20 items-center">
-
-        <div class="reveal-image order-2 md:order-1">
-          <div class="aspect-[4/5] rounded-sm overflow-hidden parallax-image relative">
-            <div class="absolute inset-0 bg-center bg-cover" style="background-image: url('assets/images/couple-1.jpg');"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent"></div>
-          </div>
-        </div>
-
-        <div class="space-y-10 order-1 md:order-2">
-          <div class="space-y-4">
-            <p class="reveal font-serif text-xl sm:text-2xl text-warm leading-relaxed">
-              When my health became weak…
-            </p>
-            <p class="reveal font-serif text-xl sm:text-2xl text-warm leading-relaxed" data-delay="300">
-              when life became heavy…
-            </p>
-            <p class="reveal font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-delay="600">
-              you cared for me with a love I cannot explain.
-            </p>
-          </div>
-
-          <div class="reveal h-px w-12 bg-gold/40"></div>
-
-          <p class="reveal font-serif text-lg sm:text-xl text-warm leading-relaxed">
-            You stayed beside me during moments where I had nothing to offer.
-          </p>
-        </div>
-      </div>
-
-      <div class="max-w-2xl mx-auto mt-32 text-center space-y-12">
-        <p class="reveal font-serif text-lg sm:text-xl text-muted leading-relaxed">
-          There was a moment where you told me…
+    <!-- ─── SLIDE 2: Our story / doubts ─── -->
+    <section class="slide" data-duration="13000">
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed" data-reveal-at="800">
+          Our story was never easy.
         </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-12" data-reveal-at="4500">
+          People doubted us.
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-4" data-reveal-at="7200">
+          People tried to separate us.
+        </p>
+      </div>
+    </section>
 
-        <div class="reveal pull-quote" data-delay="300">
+    <!-- ─── SLIDE 3: A whole year ─── -->
+    <section class="slide" data-duration="19000">
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed" data-reveal-at="800">
+          There was a time you were already my wife…
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-cream leading-relaxed mt-4" data-reveal-at="4200">
+          but I could not even speak to you.
+        </p>
+        <p class="reveal-text font-serif text-2xl sm:text-3xl text-cream leading-relaxed mt-12" data-reveal-at="8000">
+          A whole year passed.
+        </p>
+        <p class="reveal-text font-sans text-base sm:text-lg text-muted tracking-wide mt-6" data-reveal-at="10500">No calls.</p>
+        <p class="reveal-text font-sans text-base sm:text-lg text-muted tracking-wide mt-2" data-reveal-at="12200">No messages.</p>
+        <p class="reveal-text font-sans text-base sm:text-lg text-muted tracking-wide mt-2" data-reveal-at="14000">No way to know if you were okay.</p>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 4: Allah's plan ─── -->
+    <section class="slide" data-duration="9500">
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <div class="reveal-text" data-reveal-at="1200">
+          <div class="ornament-line mx-auto mb-8"></div>
+        </div>
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-reveal-at="1800">
+          But even distance<br/>could not break<br/>what Allah had written.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 5: Sacrifices ─── -->
+    <section class="slide" data-duration="17500">
+      <div class="slide-inner text-center max-w-lg mx-auto px-6">
+        <p class="reveal-text font-serif italic text-2xl sm:text-3xl text-gold/90 mb-12" data-reveal-at="800">
+          Hafsah,
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed" data-reveal-at="3800">
+          you suffered in silence.
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-6" data-reveal-at="7000">
+          you were hurt for choosing me.
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-cream leading-relaxed mt-6" data-reveal-at="10500">
+          you carried pain that nobody<br/>should have carried alone.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 6: And still ─── -->
+    <section class="slide" data-duration="11000">
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif text-xl sm:text-2xl md:text-3xl text-muted leading-relaxed" data-reveal-at="1500">
+          And still…
+        </p>
+        <p class="reveal-text font-serif italic text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed mt-10" data-reveal-at="5000">
+          you never let go of us.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 7: When I was sick ─── -->
+    <section class="slide" data-duration="17500">
+      <div class="slide-bg" data-image="assets/images/couple-1.jpg" data-blur="2" data-darken="0.55"></div>
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed" data-reveal-at="800">
+          When my health became weak…
+        </p>
+        <p class="reveal-text font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-4" data-reveal-at="3500">
+          when life became heavy…
+        </p>
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed mt-10" data-reveal-at="6800">
+          you cared for me with a love<br/>I cannot explain.
+        </p>
+        <p class="reveal-text font-serif text-base sm:text-lg text-warm leading-relaxed mt-10" data-reveal-at="11500">
+          You stayed beside me through<br/>moments I had nothing to offer.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 8: Pull quote — "you can leave me" ─── -->
+    <section class="slide" data-duration="16500">
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif text-base sm:text-lg text-muted leading-relaxed" data-reveal-at="1000">
+          There was a moment you told me…
+        </p>
+        <div class="reveal-text pull-quote mt-10" data-reveal-at="4500">
           <p class="font-serif italic text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed">
-            "You can leave me and start a new life."
+            "You can leave me<br/>and start a new life."
           </p>
         </div>
-
-        <p class="reveal font-serif italic text-xl sm:text-2xl text-warm leading-relaxed" data-delay="500">
-          But how could I leave the person who stayed loyal through everything?
+        <p class="reveal-text font-serif italic text-base sm:text-lg md:text-xl text-warm leading-relaxed mt-10" data-reveal-at="9500">
+          But how could I leave the one who<br/>stayed loyal through everything?
         </p>
       </div>
     </section>
 
-    <!-- ════════════════════ SECTION 5 — FAMILY ════════════════════ -->
-    <section class="family relative py-32 sm:py-48 px-6 bg-gradient-to-b from-ink via-surface/30 to-ink">
-      <div class="max-w-5xl mx-auto">
-
-        <div class="text-center mb-20 sm:mb-28 space-y-6">
-          <p class="reveal font-serif italic text-xl sm:text-2xl text-warm leading-relaxed">
-            And somehow…
-          </p>
-          <p class="reveal font-serif text-lg sm:text-xl text-muted leading-relaxed max-w-xl mx-auto" data-delay="400">
-            between pain, distance, responsibilities, loneliness, and struggles…
-          </p>
-          <p class="reveal font-serif text-3xl sm:text-4xl md:text-5xl text-cream leading-tight" data-delay="800">
-            we built a home.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-20">
-          <div class="reveal photo-tile aspect-[3/4] md:row-span-2 md:aspect-auto" style="background-image: url('assets/images/family-1.jpg');"></div>
-          <div class="reveal photo-tile aspect-square" style="background-image: url('assets/images/family-2.jpg');" data-delay="150"></div>
-          <div class="reveal photo-tile aspect-square" style="background-image: url('assets/images/family-3.jpg');" data-delay="300"></div>
-          <div class="reveal photo-tile aspect-[4/3] md:col-span-1" style="background-image: url('assets/images/family-4.jpg');" data-delay="450"></div>
-          <div class="reveal photo-tile aspect-[4/3] col-span-2 md:col-span-1" style="background-image: url('assets/images/family-5.jpg');" data-delay="600"></div>
-        </div>
-
-        <div class="text-center space-y-6 max-w-xl mx-auto">
-          <p class="reveal font-serif italic text-xl sm:text-2xl text-warm leading-relaxed">
-            Not a perfect one.
-          </p>
-          <p class="reveal font-serif text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-delay="400">
-            But one filled with loyalty, sabr, and love.
-          </p>
-        </div>
+    <!-- ─── SLIDE 9: We built a home ─── -->
+    <section class="slide" data-duration="17500">
+      <div class="slide-bg" data-image="assets/images/family-1.jpg" data-blur="3" data-darken="0.6"></div>
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl text-warm leading-relaxed" data-reveal-at="800">
+          And somehow…
+        </p>
+        <p class="reveal-text font-serif text-base sm:text-lg text-muted leading-relaxed mt-6" data-reveal-at="3500">
+          between pain, distance,<br/>responsibilities, struggle…
+        </p>
+        <p class="reveal-text font-serif text-3xl sm:text-4xl md:text-5xl text-cream leading-tight mt-10" data-reveal-at="7500">
+          we built a home.
+        </p>
+        <p class="reveal-text font-serif italic text-base sm:text-lg text-warm leading-relaxed mt-10" data-reveal-at="11500">
+          Not perfect. But filled with<br/>loyalty, sabr, and love.
+        </p>
       </div>
     </section>
 
-    <!-- ════════════════════ SECTION 6 — HER AS A MOTHER ════════════════════ -->
-    <section class="mother relative py-32 sm:py-48 px-6">
-      <div class="max-w-3xl mx-auto text-center space-y-24">
-
-        <div>
-          <p class="reveal font-sans text-xs sm:text-sm tracking-[0.4em] uppercase text-gold/70 mb-6">
-            Her, as a mother
-          </p>
-          <p class="reveal font-serif italic text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed" data-delay="300">
-            I watched you become a mother.
-          </p>
-        </div>
-
-        <p class="reveal font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed">
-          And I watched you carry responsibilities that should never have been yours alone.
+    <!-- ─── SLIDE 10: As a mother ─── -->
+    <section class="slide" data-duration="19500">
+      <div class="slide-bg" data-image="assets/images/mother.jpg" data-blur="3" data-darken="0.6"></div>
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-reveal-at="1000">
+          I watched you become<br/>a mother.
         </p>
-
-        <div class="space-y-4">
-          <p class="reveal font-serif text-lg sm:text-xl text-warm leading-relaxed">
-            Even while exhausted…
-          </p>
-          <p class="reveal font-serif italic text-xl sm:text-2xl text-cream leading-relaxed" data-delay="400">
-            you still gave our children warmth, patience, and love.
-          </p>
-        </div>
-
-        <p class="reveal font-serif text-lg sm:text-xl text-muted leading-relaxed">
-          I know you deserved more support than you received.
+        <p class="reveal-text font-serif text-base sm:text-lg md:text-xl text-warm leading-relaxed mt-10" data-reveal-at="5500">
+          Even exhausted, you gave our children<br/>warmth, patience, and love.
         </p>
-
-        <div class="space-y-6 pt-8">
-          <div class="reveal w-10 h-px bg-gold/40 mx-auto"></div>
-          <p class="reveal font-serif text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-delay="200">
+        <div class="reveal-text mt-10" data-reveal-at="11000">
+          <div class="ornament-line mx-auto mb-6"></div>
+          <p class="font-serif text-lg sm:text-xl md:text-2xl text-cream leading-relaxed">
             The kids are lucky to have you.
           </p>
-          <p class="reveal font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed" data-delay="500">
+          <p class="font-serif italic text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-3">
             And I am lucky Allah wrote you for me.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════ SECTION 7 — GRATITUDE ════════════════════ -->
-    <section class="gratitude relative py-40 sm:py-56 px-6">
-      <div class="max-w-2xl mx-auto text-center">
-        <div class="space-y-10">
-          <p class="reveal font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed">
-            You gave me loyalty.
-          </p>
-          <p class="reveal font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-delay="500">
-            You gave me patience.
-          </p>
-          <p class="reveal font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-delay="1000">
-            You gave me peace during my worst moments.
-          </p>
-        </div>
-
-        <div class="mt-24 space-y-6">
-          <p class="reveal font-serif text-lg sm:text-xl text-muted leading-relaxed">
-            And wallahi…
-          </p>
-          <p class="reveal font-serif text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed" data-delay="400">
-            I will spend my life trying to honor that.
+    <!-- ─── SLIDE 11: Gratitude ─── -->
+    <section class="slide" data-duration="21000">
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif italic text-2xl sm:text-3xl text-gold/90 mb-12" data-reveal-at="800">
+          Hafsah,
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-cream leading-relaxed" data-reveal-at="3500">
+          you gave me loyalty.
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-cream leading-relaxed mt-5" data-reveal-at="6800">
+          you gave me patience.
+        </p>
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-cream leading-relaxed mt-5" data-reveal-at="10000">
+          you gave me peace<br/>during my worst moments.
+        </p>
+        <div class="reveal-text mt-12" data-reveal-at="14500">
+          <p class="font-serif text-base sm:text-lg text-muted leading-relaxed">And wallahi…</p>
+          <p class="font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-3">
+            I will spend my life<br/>trying to honor that.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════ SECTION 8 — FUTURE ════════════════════ -->
-    <section class="future relative py-32 sm:py-48 px-6 bg-gradient-to-b from-ink via-surface/40 to-ink">
-      <div class="max-w-2xl mx-auto text-center space-y-20 sm:space-y-28">
-
-        <p class="reveal font-serif text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed">
-          I cannot rewrite the difficult chapters.
+    <!-- ─── SLIDE 12: The future ─── -->
+    <section class="slide" data-duration="19000">
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <p class="reveal-text font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed" data-reveal-at="1000">
+          I cannot rewrite<br/>the difficult chapters.
         </p>
-
-        <p class="reveal font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed">
-          But I promise to make the next chapters softer.
+        <p class="reveal-text font-serif italic text-lg sm:text-xl md:text-2xl text-cream leading-relaxed mt-10" data-reveal-at="5500">
+          But I promise to make<br/>the next chapters softer.
         </p>
-
-        <div class="space-y-6">
-          <p class="reveal font-serif text-lg sm:text-xl text-muted leading-relaxed">
-            As long as Allah keeps us together…
-          </p>
-          <p class="reveal font-serif italic text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed" data-delay="500">
-            you will never walk alone.
-          </p>
-        </div>
+        <p class="reveal-text font-serif text-base sm:text-lg text-muted leading-relaxed mt-12" data-reveal-at="10500">
+          As long as Allah keeps us together…
+        </p>
+        <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed mt-4" data-reveal-at="13500">
+          you will never walk alone,<br/>Hafsah.
+        </p>
       </div>
     </section>
 
-    <!-- ════════════════════ SECTION 9 — FINAL ════════════════════ -->
-    <section class="final relative min-h-[100svh] flex items-center justify-center px-6 py-32 overflow-hidden">
-      <div class="absolute inset-0">
-        <div class="absolute inset-0 bg-center bg-cover opacity-30 portrait-bg" style="background-image: url('assets/images/portrait.jpg');"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-ink via-ink/85 to-ink"></div>
-        <div class="light-leak"></div>
-      </div>
-
-      <div class="relative z-10 max-w-2xl mx-auto text-center">
-        <div class="reveal portrait-frame mb-12 sm:mb-16">
-          <div class="aspect-[4/5] sm:aspect-[5/4] max-w-md mx-auto rounded-sm overflow-hidden">
-            <div class="w-full h-full bg-center bg-cover" style="background-image: url('assets/images/portrait.jpg');"></div>
+    <!-- ─── SLIDE 13: Final (stays) ─── -->
+    <section class="slide slide-final" data-duration="0">
+      <div class="slide-bg slide-bg-final" data-image="assets/images/portrait.jpg" data-blur="0" data-darken="0.55"></div>
+      <div class="slide-inner text-center max-w-xl mx-auto px-6">
+        <div class="reveal-text portrait-frame mb-8 sm:mb-12" data-reveal-at="500">
+          <div class="aspect-[4/5] max-w-[200px] sm:max-w-[260px] mx-auto rounded-sm overflow-hidden">
+            <div class="w-full h-full bg-center bg-cover" id="portrait-img" style="background-image: url('assets/images/portrait.jpg');"></div>
           </div>
         </div>
 
-        <div class="space-y-10">
-          <p class="reveal font-serif italic text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed" data-delay="200">
-            Alhamdulillah for us.
-          </p>
-
-          <div class="reveal w-10 h-px bg-gold/50 mx-auto" data-delay="500"></div>
-
-          <p class="reveal font-serif text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed" data-delay="800">
-            Thank you for staying.
-          </p>
+        <p class="reveal-text font-serif italic text-2xl sm:text-3xl md:text-4xl text-cream leading-relaxed" data-reveal-at="2200">
+          Alhamdulillah for us.
+        </p>
+        <div class="reveal-text mt-8" data-reveal-at="5500">
+          <div class="ornament-line mx-auto"></div>
         </div>
-
-        <div class="reveal mt-20 opacity-60" data-delay="1400">
-          <p class="font-sans text-[10px] tracking-[0.5em] uppercase text-muted">
-            For my wife &nbsp;·&nbsp; with all of me
-          </p>
-        </div>
+        <p class="reveal-text font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-8" data-reveal-at="8000">
+          Thank you for staying,<br/>Hafsah.
+        </p>
+        <p class="reveal-text font-sans text-[10px] tracking-[0.5em] uppercase text-muted/60 mt-16" data-reveal-at="12000">
+          with all of me
+        </p>
       </div>
     </section>
 
-    <div class="h-32"></div>
   </main>
 
-  <!-- Voice note floating button -->
+  <!-- ════════════════════ TAP-TO-ADVANCE OVERLAY ════════════════════ -->
+  <div id="tap-zone" class="fixed inset-0 z-20"></div>
+
+  <!-- ════════════════════ VOICE NOTE BUTTON ════════════════════ -->
   <button id="voice-btn" class="voice-btn fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 group" aria-label="One last thing">
     <span class="voice-glow"></span>
     <span class="voice-inner backdrop-blur-md bg-white/[0.05] border border-gold/30 rounded-full px-5 py-3 flex items-center gap-3 transition-all duration-500 group-hover:bg-white/[0.08] group-hover:border-gold/50">
@@ -426,10 +361,9 @@
     </span>
   </button>
 
-  <!-- Voice note modal -->
+  <!-- ════════════════════ VOICE NOTE MODAL ════════════════════ -->
   <div id="voice-modal" class="voice-modal fixed inset-0 z-[60] flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-500">
     <div class="modal-backdrop absolute inset-0 bg-inkDeep/85 backdrop-blur-md"></div>
-
     <div class="modal-card relative max-w-md w-full">
       <div class="modal-glow"></div>
       <div class="relative bg-surface/80 backdrop-blur-xl border border-gold/20 rounded-2xl p-8 sm:p-10 shadow-2xl">
@@ -438,41 +372,34 @@
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
         </button>
-
         <div class="text-center mb-6">
           <p class="font-sans text-[10px] tracking-[0.4em] uppercase text-gold/70 mb-2">A note for you</p>
           <h3 class="font-serif italic text-2xl sm:text-3xl text-cream">One last thing…</h3>
         </div>
-
         <p class="font-serif text-warm text-center leading-relaxed mb-8 text-sm sm:text-base">
-          There are some things I could never write down.<br/>
+          Hafsah, there are some things<br/>I could never write down.<br/>
           So I said them out loud — for only you.
         </p>
-
-        <div class="audio-player">
-          <audio id="voice-audio" preload="metadata">
-            <source src="assets/audio/voice-note.mp3" type="audio/mpeg" />
-          </audio>
-
-          <div class="flex items-center gap-4">
-            <button id="voice-play" class="w-12 h-12 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-gold hover:bg-gold/25 transition-colors flex-shrink-0">
-              <svg id="voice-play-icon" class="w-4 h-4 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-              <svg id="voice-pause-icon" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="6" y="5" width="4" height="14"/>
-                <rect x="14" y="5" width="4" height="14"/>
-              </svg>
-            </button>
-
-            <div class="flex-1">
-              <div id="voice-progress" class="h-1 bg-white/10 rounded-full overflow-hidden cursor-pointer">
-                <div id="voice-progress-fill" class="h-full bg-gradient-to-r from-gold/60 to-gold w-0 transition-all"></div>
-              </div>
-              <div class="flex justify-between mt-2 text-[10px] tracking-wider text-muted font-mono">
-                <span id="voice-current">0:00</span>
-                <span id="voice-duration">0:00</span>
-              </div>
+        <audio id="voice-audio" preload="metadata">
+          <source src="assets/audio/voice-note.mp3" type="audio/mpeg" />
+        </audio>
+        <div class="flex items-center gap-4">
+          <button id="voice-play" class="w-12 h-12 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-gold hover:bg-gold/25 transition-colors flex-shrink-0">
+            <svg id="voice-play-icon" class="w-4 h-4 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="voice-pause-icon" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="5" width="4" height="14"/>
+              <rect x="14" y="5" width="4" height="14"/>
+            </svg>
+          </button>
+          <div class="flex-1">
+            <div id="voice-progress" class="h-1 bg-white/10 rounded-full overflow-hidden cursor-pointer">
+              <div id="voice-progress-fill" class="h-full bg-gradient-to-r from-gold/60 to-gold w-0 transition-all"></div>
+            </div>
+            <div class="flex justify-between mt-2 text-[10px] tracking-wider text-muted font-mono">
+              <span id="voice-current">0:00</span>
+              <span id="voice-duration">0:00</span>
             </div>
           </div>
         </div>
