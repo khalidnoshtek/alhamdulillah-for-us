@@ -507,13 +507,10 @@ class Ambient {
 const ambient = new Ambient();
 
 /* ════════════════════════════════════════════════════════════
-   Heart — synced thump audio for the entry icon.
-   The CSS animation `heartbeat 1.4s` peaks at 10% (lub) and 30% (dub).
-   We phase-lock audio to the running visual, so the first thump lands
-   on the next visible peak rather than fighting it.
+   Heart — thump audio fired on entry tap. Browsers can't autoplay
+   pre-gesture, so it carries the user across the threshold instead
+   of trying to play under the silently-beating icon.
    ════════════════════════════════════════════════════════════ */
-const heartAnimT0 = performance.now();   // ~when the CSS heartbeat begins (script runs at end of body)
-
 class Heart {
   constructor() { this.ctx = null; this.master = null; }
   init() {
@@ -545,13 +542,9 @@ class Heart {
     this.init();
     if (this.ctx.state === 'suspended') await this.ctx.resume();
 
-    // Phase-align to the CSS animation (lub at 140ms into each 1400ms cycle)
-    const elapsed = performance.now() - heartAnimT0;
-    const phase   = elapsed % 1400;
-    let msToNextLub = 140 - phase;
-    if (msToNextLub < 30) msToNextLub += 1400;   // 30ms scheduling buffer
-
-    const t0 = this.ctx.currentTime + msToNextLub / 1000;
+    // Fire immediately on tap — the heart icon is fading anyway, perfect
+    // sync isn't worth a 1.4s delay where the audio plays after the visual is gone.
+    const t0 = this.ctx.currentTime + 0.05;
     this.master.gain.cancelScheduledValues(this.ctx.currentTime);
     this.master.gain.setValueAtTime(0.55, this.ctx.currentTime);
 
@@ -774,6 +767,15 @@ class SlideShow {
         // Preserve the CSS unifying grade — append blur to it instead of replacing
         const base = 'saturate(0.92) contrast(1.04) brightness(1.02)';
         bg.style.filter = blur > 0 ? `${base} blur(${blur}px)` : base;
+
+        // For contain-mode slides (mother), inject a blurred fullscreen backdrop
+        // so the slide feels fullscreen without cropping any subject.
+        if (url && bg.classList.contains('slide-bg-contain')) {
+          const backdrop = document.createElement('div');
+          backdrop.className = 'slide-bg-backdrop';
+          backdrop.style.backgroundImage = `url('${url}')`;
+          slide.insertBefore(backdrop, bg);
+        }
       }
     });
   }
@@ -912,22 +914,42 @@ const savedSource = (() => { try { return localStorage.getItem('hks-audio-source
 if (savedSource === 'kina' || savedSource === 'procedural') ambient.mode = savedSource;
 
 const srcButtons = document.querySelectorAll('.src-btn');
+const kinaBtn = document.querySelector('.src-btn[data-source="kina"]');
 function paintSourceButtons(active) {
   srcButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.source === active));
 }
 paintSourceButtons(ambient.mode);
+
+// Pre-flight check: is assets/audio/kina.mp3 present? If not, mark Kina disabled
+// up-front so the button doesn't silently revert when clicked.
+fetch('assets/audio/kina.mp3', { method: 'HEAD' })
+  .then((r) => {
+    if (!r.ok) throw new Error('missing');
+  })
+  .catch(() => {
+    if (kinaBtn) {
+      kinaBtn.classList.add('is-unavailable');
+      kinaBtn.title = 'Add assets/audio/kina.mp3 to enable';
+    }
+    if (ambient.mode === 'kina') {
+      ambient.mode = 'procedural';
+      paintSourceButtons('procedural');
+    }
+  });
+
 srcButtons.forEach((btn) => {
   btn.addEventListener('click', async (e) => {
     e.stopPropagation();
+    if (btn.classList.contains('is-unavailable')) { haptic(15); return; }
     haptic(20);
     const target = btn.dataset.source;
     if (target === ambient.mode) return;
     paintSourceButtons(target);  // optimistic
     const ok = await ambient.setMode(target);
     if (!ok) {
-      // Kina file not present — snap back and tell the user once
       paintSourceButtons(ambient.mode);
-      console.warn('[ambient] kina.mp3 not found in assets/audio/ — falling back to piano');
+      btn.classList.add('is-unavailable');
+      btn.title = 'Add assets/audio/kina.mp3 to enable';
     } else {
       try { localStorage.setItem('hks-audio-source', target); } catch (err) {}
     }

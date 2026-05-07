@@ -184,13 +184,29 @@ body.light .slide-bg {
   filter: saturate(0.95) contrast(1.05) brightness(1.05);
   background-color: #E8DCC4;
 }
-/* Mother slide — show the full frame (no side cropping), held still */
+/* Mother slide — show the full frame (no side cropping), held still.
+   Pairs with .slide-bg-backdrop (injected by JS) which fills the screen
+   with a blurred copy of the same image, so the slide feels fullscreen
+   without cropping any of the kids. */
 .slide-bg-contain {
   background-size: contain !important;
   background-repeat: no-repeat;
   transform: scale(1) !important;
   animation: none !important;
+  background-color: transparent !important;  /* let backdrop show through */
 }
+.slide-bg-contain::after { display: none; }   /* skip the dark vignette over a contained image */
+.slide-bg-backdrop {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  filter: blur(40px) brightness(0.55) saturate(1.05);
+  transform: scale(1.15);                     /* hide blur edges from the blur algorithm */
+  z-index: 0;                                 /* sits below .slide-bg (z:1) and .slide-inner (z:2) */
+  opacity: 0.9;
+}
+body.light .slide-bg-backdrop { filter: blur(40px) brightness(1.1) saturate(0.9); opacity: 0.7; }
 .slide.active .slide-bg { animation: ken-burns 22s ease-out forwards; }
 @keyframes ken-burns {
   from { transform: scale(1.0); }
@@ -406,6 +422,15 @@ body.light .vol-slider::-moz-range-thumb {
 }
 .src-btn:hover { color: rgba(245, 232, 211, 0.8); }
 .src-btn.is-active { color: #F5E8D3; background: rgba(245, 232, 211, 0.08); }
+.src-btn.is-unavailable {
+  color: rgba(245, 232, 211, 0.18);
+  cursor: not-allowed;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.src-btn.is-unavailable:hover { color: rgba(245, 232, 211, 0.25); }
+body.light .src-btn.is-unavailable { color: rgba(60, 40, 30, 0.22); }
+body.light .src-btn.is-unavailable:hover { color: rgba(60, 40, 30, 0.3); }
 .src-divider {
   font-size: 0.6rem;
   color: rgba(245, 232, 211, 0.18);
