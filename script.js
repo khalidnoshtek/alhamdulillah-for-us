@@ -267,7 +267,7 @@ function applyLang(lang) {
 document.querySelectorAll('.lang-btn').forEach(b => {
   b.addEventListener('click', (e) => {
     e.stopPropagation();
-    haptic(8);
+    haptic(25);
     applyLang(b.dataset.setLang);
   });
 });
@@ -288,7 +288,7 @@ applyTheme(savedTheme === 'light' ? 'light' : 'dark');
 
 document.getElementById('theme-toggle')?.addEventListener('click', (e) => {
   e.stopPropagation();
-  haptic(10);
+  haptic(30);
   applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
 });
 
@@ -718,7 +718,7 @@ function beginExperience() {
   show.start();
   requestWakeLock();
 }
-entryStart?.addEventListener('click', () => { haptic([12, 60, 18]); beginExperience(); });
+entryStart?.addEventListener('click', () => { haptic([40, 90, 50]); beginExperience(); });
 
 /* ════════════════════════════════════════════════════════════
    Screen Wake Lock — keep the phone awake during playback.
@@ -752,7 +752,7 @@ function setIcons(playing) {
 }
 audioBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
-  haptic(10);
+  haptic(30);
   if (!ambient.playing) { ambient.start(); setIcons(true); }
   else                  { ambient.stop();  setIcons(false); }
 });
@@ -802,8 +802,8 @@ function closeModal() {
   }
   show.resume();
 }
-voiceBtn?.addEventListener('click', (e) => { e.stopPropagation(); haptic([10, 50, 14]); openModal(); });
-voiceClose?.addEventListener('click', (e) => { e.stopPropagation(); haptic(8); closeModal(); });
+voiceBtn?.addEventListener('click', (e) => { e.stopPropagation(); haptic([35, 80, 45]); openModal(); });
+voiceClose?.addEventListener('click', (e) => { e.stopPropagation(); haptic(20); closeModal(); });
 voiceModal?.addEventListener('click', (e) => {
   if (e.target.classList.contains('modal-backdrop')) closeModal();
 });
@@ -812,7 +812,7 @@ document.addEventListener('keydown', (e) => {
 });
 voicePlay?.addEventListener('click', (e) => {
   e.stopPropagation();
-  haptic(10);
+  haptic(25);
   if (voiceAudio.paused) {
     voiceAudio.play();
     playIcon.classList.add('hidden');
