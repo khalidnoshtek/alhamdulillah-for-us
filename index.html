@@ -95,6 +95,21 @@
     </svg>
   </button>
 
+  <!-- Volume slider + audio source toggle (appears when music is playing) -->
+  <div id="volume-control" class="fixed top-[4rem] right-5 sm:top-[4.75rem] sm:right-7 z-50 opacity-0 pointer-events-none transition-all duration-500 flex flex-col items-end gap-1.5">
+    <div class="backdrop-blur-md bg-white/[0.05] border border-white/10 rounded-full px-3 py-2 flex items-center gap-2">
+      <svg class="w-3 h-3 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+      </svg>
+      <input id="volume-slider" type="range" min="0" max="100" value="32" class="vol-slider" aria-label="Volume" />
+    </div>
+    <div class="audio-source-toggle backdrop-blur-md bg-white/[0.05] border border-white/10 rounded-full px-2 py-1 flex items-center gap-0">
+      <button data-source="procedural" class="src-btn is-active" aria-label="Piano">Piano</button>
+      <span class="src-divider">|</span>
+      <button data-source="kina" class="src-btn" aria-label="Kina">Kina</button>
+    </div>
+  </div>
+
   <!-- Audio toggle (top-right) -->
   <button id="audio-toggle" class="fixed top-5 right-5 sm:top-7 sm:right-7 z-50 w-11 h-11 rounded-full backdrop-blur-md bg-white/[0.04] border border-white/10 flex items-center justify-center text-muted hover:text-cream transition-all duration-500 opacity-0" aria-label="Toggle ambient sound">
     <svg id="icon-muted" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -118,7 +133,7 @@
   <main id="stage" class="fixed inset-0 z-10">
 
     <section class="slide" data-duration="18000">
-      <div class="slide-bg" data-image="assets/images/hero.jpg" data-blur="14"></div>
+      <div class="slide-bg" data-image="assets/images/hero.jpg" data-blur="10"></div>
       <div class="slide-inner text-center max-w-xl mx-auto px-6">
         <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed" data-i18n="s1_l1" data-reveal-at="1200"></p>
         <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-warm leading-relaxed mt-10" data-i18n="s1_l2" data-reveal-at="4800"></p>
@@ -177,7 +192,7 @@
     </section>
 
     <section class="slide" data-duration="17500">
-      <div class="slide-bg" data-image="assets/images/couple-1.jpg" data-blur="2" data-darken="0.55"></div>
+      <div class="slide-bg" data-image="assets/images/couple-1.jpg" data-blur="1"></div>
       <div class="slide-inner text-center max-w-xl mx-auto px-6">
         <p class="reveal-text font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed" data-i18n="s7_l1" data-reveal-at="800"></p>
         <p class="reveal-text font-serif text-lg sm:text-xl md:text-2xl text-warm leading-relaxed mt-4" data-i18n="s7_l2" data-reveal-at="3500"></p>
@@ -197,7 +212,7 @@
     </section>
 
     <section class="slide" data-duration="17500">
-      <div class="slide-bg" data-image="assets/images/family-1.jpg" data-blur="3" data-darken="0.6"></div>
+      <div class="slide-bg" data-image="assets/images/family-1.jpg" data-blur="0"></div>
       <div class="slide-inner text-center max-w-xl mx-auto px-6">
         <p class="reveal-text font-serif italic text-xl sm:text-2xl text-warm leading-relaxed" data-i18n="s9_l1" data-reveal-at="800"></p>
         <p class="reveal-text font-serif text-base sm:text-lg text-muted leading-relaxed mt-6" data-i18n="s9_l2" data-reveal-at="3500"></p>
@@ -207,7 +222,7 @@
     </section>
 
     <section class="slide" data-duration="23000">
-      <div class="slide-bg" data-image="assets/images/mother.jpg" data-blur="3" data-darken="0.6"></div>
+      <div class="slide-bg slide-bg-contain" data-image="assets/images/mother.jpg" data-blur="0"></div>
       <div class="slide-inner text-center max-w-xl mx-auto px-6">
         <p class="reveal-text font-serif italic text-xl sm:text-2xl md:text-3xl text-cream leading-relaxed" data-i18n="s10_l1" data-reveal-at="1000"></p>
         <p class="reveal-text font-serif italic text-base sm:text-lg md:text-xl leading-relaxed mt-4" data-i18n="s10_l1_sub" data-reveal-at="4000"></p>

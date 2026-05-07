@@ -299,8 +299,58 @@ class Ambient {
   constructor() {
     this.ctx = null; this.master = null; this.bus = null;
     this.timer = null; this.playing = false;
+    this.mode = 'procedural';    // 'procedural' or 'kina'
+    this.kinaAudio = null;
+    this.volume = 0.32;          // 0..1
     this.scale   = [174.61, 220.00, 261.63, 329.63, 349.23, 392.00, 440.00, 523.25];
     this.weights = [3, 2, 3, 2, 1, 2, 1, 1];
+  }
+  async loadKina() {
+    if (this.kinaAudio) return this.kinaAudio;
+    return new Promise((resolve) => {
+      const a = new Audio();
+      a.loop = true;
+      a.preload = 'auto';
+      const done = (val) => { resolve(val); a.removeEventListener('canplaythrough', onOK); a.removeEventListener('error', onErr); };
+      const onOK  = () => { this.kinaAudio = a; done(a); };
+      const onErr = () => done(null);
+      a.addEventListener('canplaythrough', onOK, { once: true });
+      a.addEventListener('error',          onErr, { once: true });
+      a.src = 'assets/audio/kina.mp3';
+      setTimeout(() => { if (!this.kinaAudio) done(null); }, 4000);
+    });
+  }
+  async setMode(mode) {
+    if (mode === this.mode) return true;
+    if (mode === 'kina') {
+      const ok = await this.loadKina();
+      if (!ok) return false;  // file missing — caller should snap UI back
+    }
+    const wasPlaying = this.playing;
+    if (wasPlaying) this.stop();
+    this.mode = mode;
+    if (wasPlaying) setTimeout(() => this.start(), 120);
+    return true;
+  }
+  fade(target, ms) {
+    if (this.mode === 'kina' && this.kinaAudio) {
+      const start = this.kinaAudio.volume, t0 = performance.now();
+      const step = (t) => {
+        const k = Math.min(1, (t - t0) / ms);
+        this.kinaAudio.volume = start + (target - start) * k;
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    } else if (this.master) {
+      const now = this.ctx.currentTime;
+      this.master.gain.cancelScheduledValues(now);
+      this.master.gain.setValueAtTime(this.master.gain.value, now);
+      this.master.gain.linearRampToValueAtTime(target, now + ms / 1000);
+    }
+  }
+  setVolume(v) {
+    this.volume = Math.max(0, Math.min(1, v));
+    if (this.playing) this.fade(this.volume, 200);
   }
   init() {
     if (this.ctx) return;
@@ -394,12 +444,26 @@ class Ambient {
     this.timer = setTimeout(() => this.scheduleLoop(), gap * 1000);
   }
   async start() {
+    if (this.mode === 'kina') {
+      const kina = await this.loadKina();
+      if (kina) {
+        try {
+          kina.volume = 0;
+          await kina.play();
+          this.playing = true;
+          this.fade(this.volume, 4000);
+          return;
+        } catch (e) { /* play() blocked */ return; }
+      }
+      // fall through to procedural if kina file missing
+      this.mode = 'procedural';
+    }
     this.init();
     if (this.ctx.state === 'suspended') await this.ctx.resume();
     const now = this.ctx.currentTime;
     this.master.gain.cancelScheduledValues(now);
     this.master.gain.setValueAtTime(this.master.gain.value, now);
-    this.master.gain.linearRampToValueAtTime(0.28, now + 4);
+    this.master.gain.linearRampToValueAtTime(this.volume, now + 4);
     if (!this.playing) {
       this.playing = true;
       this.playNote(now + 0.5, this.pickNote());
@@ -407,6 +471,18 @@ class Ambient {
     }
   }
   stop() {
+    if (this.mode === 'kina' && this.kinaAudio) {
+      const start = this.kinaAudio.volume, t0 = performance.now(), dur = 2500;
+      const step = (t) => {
+        const k = Math.min(1, (t - t0) / dur);
+        this.kinaAudio.volume = start * (1 - k);
+        if (k < 1) requestAnimationFrame(step);
+        else this.kinaAudio.pause();
+      };
+      requestAnimationFrame(step);
+      this.playing = false;
+      return;
+    }
     if (!this.ctx) return;
     const now = this.ctx.currentTime;
     this.master.gain.cancelScheduledValues(now);
@@ -620,9 +696,11 @@ class SlideShow {
       const bg = slide.querySelector('.slide-bg');
       if (bg) {
         const url = bg.dataset.image;
-        const blur = bg.dataset.blur || '0';
+        const blur = parseFloat(bg.dataset.blur || '0');
         if (url) bg.style.backgroundImage = `url('${url}')`;
-        if (blur && parseFloat(blur) > 0) bg.style.filter = `blur(${blur}px)`;
+        // Preserve the CSS unifying grade — append blur to it instead of replacing
+        const base = 'saturate(0.92) contrast(1.04) brightness(1.02)';
+        bg.style.filter = blur > 0 ? `${base} blur(${blur}px)` : base;
       }
     });
   }
@@ -747,9 +825,49 @@ document.addEventListener('visibilitychange', () => {
 const audioBtn = document.getElementById('audio-toggle');
 const iconMuted = document.getElementById('icon-muted');
 const iconPlaying = document.getElementById('icon-playing');
+const volumeControl = document.getElementById('volume-control');
+const volumeSlider = document.getElementById('volume-slider');
+
+const savedVolume = (() => { try { return localStorage.getItem('hks-volume'); } catch (e) { return null; } })();
+if (savedVolume !== null) {
+  const v = Math.max(0, Math.min(100, parseInt(savedVolume, 10)));
+  ambient.volume = v / 100;
+  if (volumeSlider) volumeSlider.value = String(v);
+}
+const savedSource = (() => { try { return localStorage.getItem('hks-audio-source'); } catch (e) { return null; } })();
+if (savedSource === 'kina' || savedSource === 'procedural') ambient.mode = savedSource;
+
+const srcButtons = document.querySelectorAll('.src-btn');
+function paintSourceButtons(active) {
+  srcButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.source === active));
+}
+paintSourceButtons(ambient.mode);
+srcButtons.forEach((btn) => {
+  btn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    haptic(20);
+    const target = btn.dataset.source;
+    if (target === ambient.mode) return;
+    paintSourceButtons(target);  // optimistic
+    const ok = await ambient.setMode(target);
+    if (!ok) {
+      // Kina file not present — snap back and tell the user once
+      paintSourceButtons(ambient.mode);
+      console.warn('[ambient] kina.mp3 not found in assets/audio/ — falling back to piano');
+    } else {
+      try { localStorage.setItem('hks-audio-source', target); } catch (err) {}
+    }
+  });
+});
+
 function setIcons(playing) {
-  if (playing) { iconMuted?.classList.add('hidden'); iconPlaying?.classList.remove('hidden'); }
-  else         { iconMuted?.classList.remove('hidden'); iconPlaying?.classList.add('hidden'); }
+  if (playing) {
+    iconMuted?.classList.add('hidden'); iconPlaying?.classList.remove('hidden');
+    volumeControl?.classList.add('is-ready');
+  } else {
+    iconMuted?.classList.remove('hidden'); iconPlaying?.classList.add('hidden');
+    volumeControl?.classList.remove('is-ready');
+  }
 }
 audioBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
@@ -757,6 +875,13 @@ audioBtn?.addEventListener('click', (e) => {
   if (!ambient.playing) { ambient.start(); setIcons(true); }
   else                  { ambient.stop();  setIcons(false); }
 });
+
+volumeSlider?.addEventListener('input', (e) => {
+  const v = parseInt(e.target.value, 10);
+  ambient.setVolume(v / 100);
+  try { localStorage.setItem('hks-volume', String(v)); } catch (err) {}
+});
+volumeSlider?.addEventListener('click', (e) => e.stopPropagation());
 
 /* Fast-forward — TEMP debug button, remove before sharing */
 document.getElementById('ff-btn')?.addEventListener('click', (e) => {
