@@ -239,6 +239,14 @@ const I18N = {
   }
 };
 
+/* ════════════════════════════════════════════════════════════
+   Haptic feedback — subtle vibration on every button tap
+   (Android/Samsung; iOS Safari ignores silently)
+   ════════════════════════════════════════════════════════════ */
+function haptic(pattern = 12) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {}
+}
+
 function applyLang(lang) {
   document.body.classList.remove('lang-en', 'lang-hi', 'lang-ur');
   document.body.classList.add(`lang-${lang}`);
@@ -259,6 +267,7 @@ function applyLang(lang) {
 document.querySelectorAll('.lang-btn').forEach(b => {
   b.addEventListener('click', (e) => {
     e.stopPropagation();
+    haptic(8);
     applyLang(b.dataset.setLang);
   });
 });
@@ -279,6 +288,7 @@ applyTheme(savedTheme === 'light' ? 'light' : 'dark');
 
 document.getElementById('theme-toggle')?.addEventListener('click', (e) => {
   e.stopPropagation();
+  haptic(10);
   applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
 });
 
@@ -708,7 +718,7 @@ function beginExperience() {
   show.start();
   requestWakeLock();
 }
-entryStart?.addEventListener('click', beginExperience);
+entryStart?.addEventListener('click', () => { haptic([12, 60, 18]); beginExperience(); });
 
 /* ════════════════════════════════════════════════════════════
    Screen Wake Lock — keep the phone awake during playback.
@@ -742,6 +752,7 @@ function setIcons(playing) {
 }
 audioBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
+  haptic(10);
   if (!ambient.playing) { ambient.start(); setIcons(true); }
   else                  { ambient.stop();  setIcons(false); }
 });
@@ -791,8 +802,8 @@ function closeModal() {
   }
   show.resume();
 }
-voiceBtn?.addEventListener('click', (e) => { e.stopPropagation(); openModal(); });
-voiceClose?.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
+voiceBtn?.addEventListener('click', (e) => { e.stopPropagation(); haptic([10, 50, 14]); openModal(); });
+voiceClose?.addEventListener('click', (e) => { e.stopPropagation(); haptic(8); closeModal(); });
 voiceModal?.addEventListener('click', (e) => {
   if (e.target.classList.contains('modal-backdrop')) closeModal();
 });
@@ -801,6 +812,7 @@ document.addEventListener('keydown', (e) => {
 });
 voicePlay?.addEventListener('click', (e) => {
   e.stopPropagation();
+  haptic(10);
   if (voiceAudio.paused) {
     voiceAudio.play();
     playIcon.classList.add('hidden');
