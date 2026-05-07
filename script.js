@@ -14,7 +14,7 @@ const I18N = {
     s1_l2: 'Ours survived storms.',
     s1_l3: 'And somehow…',
     s1_l4: 'we still chose each other.',
-    s1_birthday: 'Happy Birthday',
+    s1_birthday: 'Your Special Day',
     s1_name: '<span class="h-name">Hafsah</span>',
 
     s2_l1: 'Our story was never easy.',
@@ -67,8 +67,9 @@ const I18N = {
 
     s12_l1: 'I cannot rewrite<br>the difficult chapters.',
     s12_l2: 'But I promise to make<br>the next chapters softer.',
-    s12_l3: 'As long as <span class="h-allah">Allah</span> keeps us together…',
-    s12_l4: 'you will never walk alone,<br><span class="h-name">Hafsah</span>.',
+    s12_l3: '<span class="h-allah">Allah</span> will keep us together,',
+    s12_l4: '<em>inshaAllah</em> — forever,<br>here and in <em>Jannah</em>.',
+    s12_l5: 'you will never walk alone,<br><span class="h-name">Hafsah</span>.',
 
     s13_l1: 'Alhamdulillah for us.',
     s13_l2: 'Thank you for staying,<br><span class="h-name">Hafsah</span>.',
@@ -91,37 +92,37 @@ const I18N = {
     s1_l2: 'Hamari toofaano se guzri.',
     s1_l3: 'Aur phir bhi…',
     s1_l4: 'humne ek doosre ko chuna.',
-    s1_birthday: 'Salgirah Mubarak',
+    s1_birthday: 'Aapka Khaas Din',
     s1_name: '<span class="h-name">Hafsah</span>',
 
     s2_l1: 'Hamari kahaani kabhi aasaan na thi.',
     s2_l2: 'Logon ne hum par shak kiya.',
     s2_l3: 'Logon ne humein juda karna chaha.',
 
-    s3_l1: 'Ek waqt tha jab tum meri biwi thi…',
-    s3_l2: 'magar main tumse baat bhi nahi kar sakta tha.',
+    s3_l1: 'Ek waqt tha jab aap meri biwi thi…',
+    s3_l2: 'magar main aapse baat bhi nahi kar sakta tha.',
     s3_l3: 'Ek poora saal beet gaya.',
     s3_l4: 'Koi awaaz nahi.',
     s3_l5: 'Koi paigaam nahi.',
-    s3_l6: 'Yeh jaane ka koi raasta nahi tha ki tum theek ho.',
+    s3_l6: 'Yeh jaane ka koi raasta nahi tha ki aap theek ho.',
 
     s4_l1: 'Magar doori bhi woh na tod saki<br>jo <span class="h-allah">Allah</span> ne likha tha.',
 
     s5_name: '<span class="h-name">Hafsah</span>, <span class="h-pet">habibi</span>,',
-    s5_l1: 'tumne khaamosh dard sahaa.',
-    s5_l2: 'tumhe takleef hui mujhe chunne ki.',
-    s5_l3: 'tumne woh gham tanha uthaaya<br>jo kisi ko tanha nahi uthana tha.',
+    s5_l1: 'aapne khaamosh dard sahaa.',
+    s5_l2: 'aapko takleef hui mujhe chunne ki.',
+    s5_l3: 'aapne woh gham tanha uthaaya<br>jo kisi ko tanha nahi uthana tha.',
 
     s6_l1: 'Aur phir bhi…',
-    s6_l2: 'tumne humein kabhi nahi chhoda.',
+    s6_l2: 'aapne humein kabhi nahi chhoda.',
 
     s7_l1: 'Jab meri sehat kamzor thi…',
     s7_l2: 'jab zindagi bhaari thi…',
-    s7_l3: 'tumne mujhe aisi mohabbat di<br>jo bayaan nahi kar sakta.',
-    s7_l4: 'Tum mere saath tab bhi rahi<br>jab mujhmein dene ko kuch na tha.',
+    s7_l3: 'aapne mujhe aisi mohabbat di<br>jo bayaan nahi kar sakta.',
+    s7_l4: 'Aap mere saath tab bhi rahi<br>jab mujhmein dene ko kuch na tha.',
 
-    s8_l1: 'Ek lamha tha jab tumne kaha…',
-    s8_quote: '"Tum mujhe chhod kar<br>nayi zindagi shuru kar sakti ho."',
+    s8_l1: 'Ek lamha tha jab aapne kaha…',
+    s8_quote: '"Aap mujhe chhod kar<br>nayi zindagi shuru kar sakte ho."',
     s8_l2: 'Magar main use kaise chhodta<br>jo har haal mein wafadar rahi?',
 
     s9_l1: 'Aur phir bhi…',
@@ -129,23 +130,24 @@ const I18N = {
     s9_l3: 'humne ek ghar banaaya.',
     s9_l4: 'Mukammal nahi. Magar wafa,<br>sabr aur mohabbat se bhara.',
 
-    s10_l1: 'Maine tumhe maa banta dekha.',
+    s10_l1: 'Maine aapko maa banta dekha.',
     s10_l1_sub: '<span class="h-pet">Umm Yahya.</span>&nbsp; <span class="h-pet">Umm Ibrahim.</span>',
-    s10_l2: 'Thakan ke bawajood, tumne <span class="h-kid">Yahya</span> aur <span class="h-kid">Ibrahim</span> ko<br>narmi, sabr aur mohabbat di.',
-    s10_l3: 'Bachche khushnaseeb hain ki tum unki maa ho.',
-    s10_l4: 'Aur main khushnaseeb hoon ki <span class="h-allah">Allah</span> ne tumhe mere liye likha.',
+    s10_l2: 'Thakan ke bawajood, aapne <span class="h-kid">Yahya</span> aur <span class="h-kid">Ibrahim</span> ko<br>narmi, sabr aur mohabbat di.',
+    s10_l3: 'Bachche khushnaseeb hain ki aap unki maa ho.',
+    s10_l4: 'Aur main khushnaseeb hoon ki <span class="h-allah">Allah</span> ne aapko mere liye likha.',
 
     s11_name: '<span class="h-name">Hafsah</span>, <span class="h-pet">habibi</span>,',
-    s11_l1: 'tumne mujhe wafa di.',
-    s11_l2: 'tumne mujhe sabr diya.',
-    s11_l3: 'tumne mujhe meri sabse<br>buri raaton mein sukoon diya.',
+    s11_l1: 'aapne mujhe wafa di.',
+    s11_l2: 'aapne mujhe sabr diya.',
+    s11_l3: 'aapne mujhe meri sabse<br>buri raaton mein sukoon diya.',
     s11_l4: 'Aur wallahi…',
     s11_l5: 'main saari zindagi<br>iska haq ada karne mein lagaa doonga.',
 
     s12_l1: 'Main mushkil safhe<br>dobara nahi likh sakta.',
     s12_l2: 'Magar waada karta hoon<br>aane wale safhe narm honge.',
-    s12_l3: 'Jab tak <span class="h-allah">Allah</span> humein saath rakhe…',
-    s12_l4: 'tum kabhi tanha nahi chalogi,<br><span class="h-name">Hafsah</span>.',
+    s12_l3: '<span class="h-allah">Allah</span> humein saath rakhega,',
+    s12_l4: '<em>inshaAllah</em> — hamesha,<br>yahaan aur <em>Jannah</em> mein.',
+    s12_l5: 'aap kabhi tanha nahi chalogi,<br><span class="h-name">Hafsah</span>.',
 
     s13_l1: 'Alhamdulillah hum dono ke liye.',
     s13_l2: 'Shukriya saath nibhaane ka,<br><span class="h-name">Hafsah</span>.',
@@ -153,9 +155,9 @@ const I18N = {
     s13_name: '<span class="h-me">Khalid</span>',
 
     voice_btn: 'Ek aakhri baat…',
-    voice_pre: 'Tumhare liye',
+    voice_pre: 'Aapke liye',
     voice_title: 'Ek aakhri baat…',
-    voice_body: '<span class="h-name">Hafsah</span>, kuch baatein hain<br>jo main kabhi likh na saka.<br>Toh main ne keh diya — sirf tumhare liye.'
+    voice_body: '<span class="h-name">Hafsah</span>, kuch baatein hain<br>jo main kabhi likh na saka.<br>Toh main ne keh diya — sirf aapke liye.'
   },
 
   ur: {
@@ -168,37 +170,37 @@ const I18N = {
     s1_l2: 'ہماری طوفانوں سے گزری۔',
     s1_l3: 'اور پھر بھی۔۔۔',
     s1_l4: 'ہم نے ایک دوسرے کو چنا۔',
-    s1_birthday: 'سالگرہ مبارک',
+    s1_birthday: 'آپ کا خاص دن',
     s1_name: '<span class="h-name">حفصہ</span>',
 
     s2_l1: 'ہماری کہانی کبھی آسان نہ تھی۔',
     s2_l2: 'لوگوں نے ہم پر شک کیا۔',
     s2_l3: 'لوگوں نے ہمیں جدا کرنا چاہا۔',
 
-    s3_l1: 'ایک وقت تھا جب تم میری بیوی تھی۔۔۔',
-    s3_l2: 'مگر میں تم سے بات بھی نہ کر سکتا تھا۔',
+    s3_l1: 'ایک وقت تھا جب آپ میری بیوی تھی۔۔۔',
+    s3_l2: 'مگر میں آپ سے بات بھی نہ کر سکتا تھا۔',
     s3_l3: 'ایک پورا سال گزرا۔',
     s3_l4: 'کوئی فون نہیں۔',
     s3_l5: 'کوئی پیغام نہیں۔',
-    s3_l6: 'یہ جاننے کا کوئی راستہ نہ تھا کہ تم ٹھیک ہو۔',
+    s3_l6: 'یہ جاننے کا کوئی راستہ نہ تھا کہ آپ ٹھیک ہو۔',
 
-    s4_l1: 'مگر دوری بھی وہ نہ توڑ سکی<br>جو <span class="h-allah">اللہ</span> نے لکھا تھا۔',
+    s4_l1: 'مگر دوری بھی وہ نہ توڑ سکی<br>جو <span class="h-allah">اللّٰہ</span> نے لکھا تھا۔',
 
     s5_name: '<span class="h-name">حفصہ</span>، <span class="h-pet">حبیبی</span>،',
-    s5_l1: 'تم نے خاموشی سے درد سہا۔',
-    s5_l2: 'تمہیں مجھے چننے کی سزا ملی۔',
-    s5_l3: 'تم نے وہ غم اکیلے اٹھایا<br>جو کسی کو اکیلے نہیں اٹھانا تھا۔',
+    s5_l1: 'آپ نے خاموشی سے درد سہا۔',
+    s5_l2: 'آپ کو مجھے چننے کی سزا ملی۔',
+    s5_l3: 'آپ نے وہ غم اکیلے اٹھایا<br>جو کسی کو اکیلے نہیں اٹھانا تھا۔',
 
     s6_l1: 'اور پھر بھی۔۔۔',
-    s6_l2: 'تم نے ہمیں نہیں چھوڑا۔',
+    s6_l2: 'آپ نے ہمیں نہیں چھوڑا۔',
 
     s7_l1: 'جب میری صحت کمزور تھی۔۔۔',
     s7_l2: 'جب زندگی بھاری تھی۔۔۔',
-    s7_l3: 'تم نے مجھے ایسی محبت دی<br>جو میں بیان نہیں کر سکتا۔',
-    s7_l4: 'تم میرے ساتھ تب بھی رہی<br>جب مجھ میں دینے کو کچھ نہ تھا۔',
+    s7_l3: 'آپ نے مجھے ایسی محبت دی<br>جو میں بیان نہیں کر سکتا۔',
+    s7_l4: 'آپ میرے ساتھ تب بھی رہی<br>جب مجھ میں دینے کو کچھ نہ تھا۔',
 
-    s8_l1: 'ایک لمحہ تھا جب تم نے کہا۔۔۔',
-    s8_quote: '"تم مجھے چھوڑ کر<br>نئی زندگی شروع کر سکتی ہو۔"',
+    s8_l1: 'ایک لمحہ تھا جب آپ نے کہا۔۔۔',
+    s8_quote: '"آپ مجھے چھوڑ کر<br>نئی زندگی شروع کر سکتے ہو۔"',
     s8_l2: 'مگر میں اسے کیسے چھوڑتا<br>جو ہر حال میں وفادار رہی؟',
 
     s9_l1: 'اور پھر بھی۔۔۔',
@@ -206,23 +208,24 @@ const I18N = {
     s9_l3: 'ہم نے ایک گھر بنایا۔',
     s9_l4: 'مکمل نہیں۔ مگر وفا،<br>صبر اور محبت سے بھرا۔',
 
-    s10_l1: 'میں نے تمہیں ماں بنتے دیکھا۔',
+    s10_l1: 'میں نے آپ کو ماں بنتے دیکھا۔',
     s10_l1_sub: '<span class="h-pet">امّ یحییٰ۔</span>&nbsp; <span class="h-pet">امّ ابراہیم۔</span>',
-    s10_l2: 'تھکن کے باوجود، تم نے <span class="h-kid">یحییٰ</span> اور <span class="h-kid">ابراہیم</span> کو<br>گرمجوشی، صبر اور محبت دی۔',
-    s10_l3: 'بچے خوش قسمت ہیں کہ تم ان کی ماں ہو۔',
-    s10_l4: 'اور میں خوش قسمت ہوں کہ <span class="h-allah">اللہ</span> نے تمہیں میرے لیے لکھا۔',
+    s10_l2: 'تھکن کے باوجود، آپ نے <span class="h-kid">یحییٰ</span> اور <span class="h-kid">ابراہیم</span> کو<br>گرمجوشی، صبر اور محبت دی۔',
+    s10_l3: 'بچے خوش قسمت ہیں کہ آپ ان کی ماں ہو۔',
+    s10_l4: 'اور میں خوش قسمت ہوں کہ <span class="h-allah">اللّٰہ</span> نے آپ کو میرے لیے لکھا۔',
 
     s11_name: '<span class="h-name">حفصہ</span>، <span class="h-pet">حبیبی</span>،',
-    s11_l1: 'تم نے مجھے وفا دی۔',
-    s11_l2: 'تم نے مجھے صبر دیا۔',
-    s11_l3: 'تم نے مجھے میرے بدترین<br>لمحوں میں سکون دیا۔',
+    s11_l1: 'آپ نے مجھے وفا دی۔',
+    s11_l2: 'آپ نے مجھے صبر دیا۔',
+    s11_l3: 'آپ نے مجھے میرے بدترین<br>لمحوں میں سکون دیا۔',
     s11_l4: 'اور واللہ۔۔۔',
     s11_l5: 'میں ساری زندگی<br>اس کا حق ادا کرنے کی کوشش کروں گا۔',
 
     s12_l1: 'میں مشکل صفحے<br>دوبارہ نہیں لکھ سکتا۔',
     s12_l2: 'مگر وعدہ کرتا ہوں<br>کہ آنے والے صفحے نرم ہوں گے۔',
-    s12_l3: 'جب تک <span class="h-allah">اللہ</span> ہمیں ساتھ رکھے۔۔۔',
-    s12_l4: 'تم کبھی اکیلی نہیں چلوگی،<br><span class="h-name">حفصہ</span>۔',
+    s12_l3: '<span class="h-allah">اللّٰہ</span> ہمیں ساتھ رکھے گا،',
+    s12_l4: '<em>انشاءاللّٰہ</em> — ہمیشہ،<br>یہاں اور <em>جنت</em> میں۔',
+    s12_l5: 'آپ کبھی اکیلی نہیں چلوگی،<br><span class="h-name">حفصہ</span>۔',
 
     s13_l1: 'الحمدللہ ہم دونوں کے لیے۔',
     s13_l2: 'شکریہ ساتھ نبھانے کا،<br><span class="h-name">حفصہ</span>۔',
@@ -230,9 +233,9 @@ const I18N = {
     s13_name: '<span class="h-me">خالد</span>',
 
     voice_btn: 'ایک آخری بات۔۔۔',
-    voice_pre: 'تمہارے لیے',
+    voice_pre: 'آپ کے لیے',
     voice_title: 'ایک آخری بات۔۔۔',
-    voice_body: '<span class="h-name">حفصہ</span>، کچھ باتیں ہیں<br>جو میں کبھی لکھ نہ سکا۔<br>تو میں نے کہہ دیں — صرف تمہارے لیے۔'
+    voice_body: '<span class="h-name">حفصہ</span>، کچھ باتیں ہیں<br>جو میں کبھی لکھ نہ سکا۔<br>تو میں نے کہہ دیں — صرف آپ کے لیے۔'
   }
 };
 
