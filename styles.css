@@ -1,0 +1,366 @@
+/* ────────────────────────────────────────────────────────────
+   Base
+   ──────────────────────────────────────────────────────────── */
+:root {
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: #0F0D0B;
+  font-feature-settings: "ss01", "kern";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* iOS safe-area padding so floating UI clears notches and home indicator */
+@supports (padding: env(safe-area-inset-bottom)) {
+  #audio-toggle { top: max(1.25rem, env(safe-area-inset-top)); }
+  #voice-btn { bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Loader
+   ──────────────────────────────────────────────────────────── */
+.loader-orb {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #C9A961;
+  box-shadow: 0 0 24px 4px rgba(201, 169, 97, 0.4);
+  animation: loader-pulse 1.6s var(--ease-soft) infinite;
+}
+@keyframes loader-pulse {
+  0%, 100% { transform: scale(0.6); opacity: 0.4; }
+  50%      { transform: scale(1);   opacity: 1; }
+}
+body.loaded #loader {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ────────────────────────────────────────────────────────────
+   Background atmosphere
+   ──────────────────────────────────────────────────────────── */
+.bg-radial-warm {
+  background: radial-gradient(ellipse at 50% 40%, rgba(201, 169, 97, 0.08) 0%, transparent 60%);
+}
+
+/* Subtle film grain — mobile-tuned, not too heavy */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+}
+
+/* Hero photo zoom-in (Ken-Burns subtle) */
+.hero-photo {
+  filter: blur(14px) brightness(0.55) saturate(1.05);
+  transform: scale(1.15);
+  animation: hero-breathe 28s ease-in-out infinite alternate;
+}
+@keyframes hero-breathe {
+  0%   { transform: scale(1.15); }
+  100% { transform: scale(1.25); }
+}
+
+/* Hero text reveal (timed, not scroll-triggered) */
+.hero-line, .hero-final, .scroll-indicator {
+  animation: hero-fade 2.4s var(--ease-soft) forwards;
+  animation-delay: var(--d, 0s);
+}
+@keyframes hero-fade {
+  0%   { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.scroll-indicator { animation-duration: 1.6s; }
+.scroll-indicator .w-px {
+  animation: scroll-line 2.6s ease-in-out infinite;
+  transform-origin: top;
+}
+@keyframes scroll-line {
+  0%   { transform: scaleY(0); opacity: 0.2; }
+  50%  { transform: scaleY(1); opacity: 0.9; }
+  100% { transform: scaleY(0); opacity: 0.2; transform-origin: bottom; }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Reveal-on-scroll
+   ──────────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 1.6s var(--ease-soft),
+    transform 1.6s var(--ease-soft);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-image {
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition:
+    opacity 2s var(--ease-soft),
+    transform 2s var(--ease-soft);
+}
+.reveal-image.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ────────────────────────────────────────────────────────────
+   Section 3 — sacrifice cards
+   ──────────────────────────────────────────────────────────── */
+.sacrifice-card {
+  position: relative;
+  padding: 1.75rem 1.5rem;
+  background: linear-gradient(135deg, rgba(232, 220, 196, 0.025), rgba(201, 169, 97, 0.015));
+  border: 1px solid rgba(201, 169, 97, 0.12);
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+}
+.sacrifice-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 30%;
+  background: linear-gradient(to bottom, transparent, #C9A961, transparent);
+  opacity: 0.6;
+}
+@media (min-width: 640px) {
+  .sacrifice-card { padding: 2rem 2.5rem; }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Section 4 — pull quote + parallax image
+   ──────────────────────────────────────────────────────────── */
+.pull-quote {
+  position: relative;
+  padding: 2rem 1rem;
+}
+.pull-quote::before,
+.pull-quote::after {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: rgba(201, 169, 97, 0.5);
+  margin: 0 auto 1.25rem;
+}
+.pull-quote::after {
+  margin: 1.25rem auto 0;
+}
+
+.parallax-image {
+  will-change: transform;
+}
+
+/* ────────────────────────────────────────────────────────────
+   Section 5 — family photo tiles
+   ──────────────────────────────────────────────────────────── */
+.photo-tile {
+  background-size: cover;
+  background-position: center;
+  background-color: #1A1612;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  filter: saturate(0.92) brightness(0.95);
+  transition: filter 1s var(--ease-soft), transform 1.2s var(--ease-soft);
+}
+.photo-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15,13,11,0.4) 0%, transparent 50%);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .photo-tile:hover {
+    filter: saturate(1) brightness(1);
+    transform: scale(1.01);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Section 9 — final / portrait
+   ──────────────────────────────────────────────────────────── */
+.portrait-bg {
+  filter: blur(40px) brightness(0.6);
+  transform: scale(1.2);
+}
+
+.portrait-frame {
+  position: relative;
+}
+.portrait-frame::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  background: linear-gradient(135deg, rgba(201, 169, 97, 0.25), transparent 50%, rgba(201, 169, 97, 0.15));
+  border-radius: 4px;
+  z-index: -1;
+  filter: blur(20px);
+  opacity: 0.6;
+}
+
+.light-leak {
+  position: absolute;
+  top: 10%;
+  left: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(ellipse, rgba(201, 169, 97, 0.12) 0%, transparent 60%);
+  filter: blur(40px);
+  pointer-events: none;
+  animation: light-drift 14s ease-in-out infinite alternate;
+}
+@keyframes light-drift {
+  0%   { transform: translate(0, 0); opacity: 0.5; }
+  100% { transform: translate(30%, 10%); opacity: 0.9; }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Voice note button + modal
+   ──────────────────────────────────────────────────────────── */
+.voice-btn {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.2s var(--ease-soft), transform 1.2s var(--ease-soft);
+}
+.voice-btn.is-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.voice-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse, rgba(201, 169, 97, 0.35), transparent 70%);
+  filter: blur(12px);
+  opacity: 0.6;
+  animation: voice-pulse 3.2s ease-in-out infinite;
+}
+@keyframes voice-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 0.8; transform: scale(1.08); }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2.4s ease-in-out infinite;
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+.voice-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.voice-modal .modal-card {
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.6s var(--ease-soft);
+}
+.voice-modal.is-open .modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.modal-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse at center, rgba(201, 169, 97, 0.25), transparent 65%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ────────────────────────────────────────────────────────────
+   Mobile-first tuning (Galaxy S23 ≈ 360 × 780 css px)
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .hero-line {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+  h1 { letter-spacing: 0.01em; }
+  .sacrifice-card { padding: 1.5rem 1.25rem; }
+  .voice-btn .voice-inner { padding: 0.65rem 1rem; }
+  .voice-btn .voice-inner span:last-child { font-size: 0.8125rem; }
+
+  /* Floating UI — tighter on narrow screens */
+  #audio-toggle { width: 2.5rem; height: 2.5rem; top: 1rem; right: 1rem; }
+  #voice-btn { right: 1rem; bottom: 1.25rem; }
+
+  /* Section paddings — keep emotional pacing without dead scrolling */
+  section.story-section { padding-top: 6rem; padding-bottom: 6rem; }
+  section.sacrifices, section.hardtimes, section.family,
+  section.mother, section.gratitude, section.future {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+  section.gratitude { padding-top: 8rem; padding-bottom: 8rem; }
+
+  /* Hero text — give it room to breathe at 360px wide */
+  .hero h1 { font-size: 2.25rem; }
+
+  /* Pull quote — tighten on small screens */
+  .pull-quote { padding: 1.25rem 0.5rem; }
+  .pull-quote p { font-size: 1.5rem; line-height: 1.45; }
+}
+
+/* Slightly narrow phones (older Galaxy etc.) */
+@media (max-width: 360px) {
+  .hero-line { font-size: 1rem; }
+  .voice-btn .voice-inner span:last-child { display: none; }
+  .voice-btn .voice-inner { padding: 0.65rem; }
+  .voice-btn .voice-inner .w-2 { width: 0.5rem; height: 0.5rem; }
+}
+
+/* Reduce vertical breathing room on shorter mobile screens so each
+   section still feels like one "moment" rather than endless scroll */
+@media (max-width: 640px) {
+  .story-section .space-y-32 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 5rem;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Reduced motion accessibility
+   ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.2s !important;
+  }
+  .reveal, .reveal-image, .hero-line, .hero-final, .scroll-indicator {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero-photo { animation: none; transform: scale(1.1); }
+  .light-leak { animation: none; }
+}
