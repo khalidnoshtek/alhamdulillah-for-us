@@ -194,6 +194,7 @@ body.light .slide-bg {
   transform: scale(1) !important;
   animation: none !important;
   background-color: transparent !important;  /* let backdrop show through */
+  opacity: 1 !important;                     /* sharp photo over the soft backdrop */
 }
 .slide-bg-contain::after { display: none; }   /* skip the dark vignette over a contained image */
 .slide-bg-backdrop {

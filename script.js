@@ -527,16 +527,35 @@ class Heart {
     this.master.connect(this.ctx.destination);
   }
   thump(time, intensity) {
+    // Body: sine swept 180Hz -> 80Hz. Stays inside the audible range of
+    // phone speakers (which usually roll off below ~120Hz). Old version
+    // bottomed out at 34Hz and was inaudible on phones.
     const o = this.ctx.createOscillator();
     o.type = 'sine';
-    o.frequency.setValueAtTime(85, time);
-    o.frequency.exponentialRampToValueAtTime(34, time + 0.18);
+    o.frequency.setValueAtTime(180, time);
+    o.frequency.exponentialRampToValueAtTime(80, time + 0.18);
     const g = this.ctx.createGain();
     g.gain.setValueAtTime(0, time);
-    g.gain.linearRampToValueAtTime(intensity, time + 0.012);
+    g.gain.linearRampToValueAtTime(intensity, time + 0.010);
     g.gain.exponentialRampToValueAtTime(0.001, time + 0.32);
     o.connect(g); g.connect(this.master);
     o.start(time); o.stop(time + 0.4);
+
+    // Click: short noise transient gives the thump a percussive front
+    // so the brain reads it as a heartbeat, not a tone.
+    const noise = this.ctx.createBufferSource();
+    const len = Math.floor(this.ctx.sampleRate * 0.04);
+    const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    noise.buffer = buf;
+    const lp = this.ctx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 700; lp.Q.value = 0.9;
+    const ng = this.ctx.createGain();
+    ng.gain.setValueAtTime(intensity * 0.55, time);
+    ng.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+    noise.connect(lp); lp.connect(ng); ng.connect(this.master);
+    noise.start(time);
   }
   async start(numBeats = 3) {
     this.init();
@@ -758,24 +777,17 @@ class SlideShow {
     this.activatedAt = 0;
     this.remainingOnPause = 0;
 
+    // Apply background-image to every layer (slide-bg AND slide-bg-backdrop).
     this.slides.forEach(slide => {
+      slide.querySelectorAll('[data-image]').forEach((el) => {
+        const url = el.dataset.image;
+        if (url) el.style.backgroundImage = `url('${url}')`;
+      });
       const bg = slide.querySelector('.slide-bg');
       if (bg) {
-        const url = bg.dataset.image;
         const blur = parseFloat(bg.dataset.blur || '0');
-        if (url) bg.style.backgroundImage = `url('${url}')`;
-        // Preserve the CSS unifying grade — append blur to it instead of replacing
         const base = 'saturate(0.92) contrast(1.04) brightness(1.02)';
         bg.style.filter = blur > 0 ? `${base} blur(${blur}px)` : base;
-
-        // For contain-mode slides (mother), inject a blurred fullscreen backdrop
-        // so the slide feels fullscreen without cropping any subject.
-        if (url && bg.classList.contains('slide-bg-contain')) {
-          const backdrop = document.createElement('div');
-          backdrop.className = 'slide-bg-backdrop';
-          backdrop.style.backgroundImage = `url('${url}')`;
-          slide.insertBefore(backdrop, bg);
-        }
       }
     });
   }
@@ -858,19 +870,28 @@ const entryGate = document.getElementById('entry-gate');
 const entryStart = document.getElementById('entry-start');
 
 function beginExperience() {
-  entryGate.classList.add('is-leaving');
-  setTimeout(() => entryGate.style.display = 'none', 1500);
+  // Heartbeat moment: user taps -> hears + sees the heart for 1.6s
+  // (one full beat fully visible) before the gate begins fading.
+  heart.start();
+  const HEART_DELAY = 1600;
+  setTimeout(() => {
+    entryGate.classList.add('is-leaving');
+    setTimeout(() => entryGate.style.display = 'none', 1500);
+  }, HEART_DELAY);
   setTimeout(() => {
     document.getElementById('audio-toggle')?.style.setProperty('opacity', '1');
     document.getElementById('theme-toggle')?.classList.add('is-ready');
     document.getElementById('ff-btn')?.style.setProperty('opacity', '1');
     // voice-btn intentionally NOT revealed here — it appears only on the
     // final slide, after the closing words have settled.
-  }, 800);
-  heart.start();          // 3 thumps in sync with the visible heart icon
-  ambient.start();
-  setIcons(true);
-  show.start();
+  }, HEART_DELAY + 800);
+  // Ambient + slides start with the gate fade so the heartbeat moment
+  // lives on its own before the experience proper begins.
+  setTimeout(() => {
+    ambient.start();
+    setIcons(true);
+    show.start();
+  }, HEART_DELAY);
   requestWakeLock();
 }
 entryStart?.addEventListener('click', () => { haptic([40, 90, 50]); beginExperience(); });
