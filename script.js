@@ -695,8 +695,29 @@ function beginExperience() {
   ambient.start();
   setIcons(true);
   show.start();
+  requestWakeLock();
 }
 entryStart?.addEventListener('click', beginExperience);
+
+/* ════════════════════════════════════════════════════════════
+   Screen Wake Lock — keep the phone awake during playback.
+   Must be requested from a user gesture (the entry tap).
+   Auto-reacquires if the tab is backgrounded and returns.
+   ════════════════════════════════════════════════════════════ */
+let wakeLock = null;
+async function requestWakeLock() {
+  if (!('wakeLock' in navigator)) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch (e) { /* silently swallow — not all browsers/states allow it */ }
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !wakeLock &&
+      entryGate.classList.contains('is-leaving')) {
+    requestWakeLock();
+  }
+});
 
 /* ════════════════════════════════════════════════════════════
    Audio toggle — mute/unmute mid-experience
