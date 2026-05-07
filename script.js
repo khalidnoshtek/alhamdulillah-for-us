@@ -645,6 +645,16 @@ class SlideShow {
     if (dur > 0 && index < this.slides.length - 1) {
       this.advanceTimer = setTimeout(() => this.next(), dur);
     }
+
+    // Voice-note button appears only on the final slide, after the
+    // closing lines have settled — feels like an offered "and there's
+    // one more thing only you should hear" moment.
+    if (index === this.slides.length - 1) {
+      this.revealTimers.push(setTimeout(() => {
+        document.getElementById('voice-btn')?.classList.add('is-ready');
+      }, 15500));
+    }
+
     this.updateProgress();
   }
   next() { if (this.current < this.slides.length - 1) this.go(this.current + 1); }
@@ -690,7 +700,8 @@ function beginExperience() {
   setTimeout(() => {
     document.getElementById('audio-toggle')?.style.setProperty('opacity', '1');
     document.getElementById('theme-toggle')?.classList.add('is-ready');
-    document.getElementById('voice-btn')?.classList.add('is-ready');
+    // voice-btn intentionally NOT revealed here — it appears only on the
+    // final slide, after the closing words have settled.
   }, 800);
   ambient.start();
   setIcons(true);
