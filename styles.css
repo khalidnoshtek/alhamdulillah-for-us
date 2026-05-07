@@ -26,7 +26,7 @@ body {
 }
 
 @supports (padding: env(safe-area-inset-bottom)) {
-  #theme-toggle { top: max(1.25rem, env(safe-area-inset-top)); }
+  #audio-toggle, #theme-toggle { top: max(1.25rem, env(safe-area-inset-top)); }
   #lang-toggle  { top: max(1.25rem, env(safe-area-inset-top)); }
   #voice-btn    { bottom: max(1.5rem, env(safe-area-inset-bottom)); }
 }
@@ -329,61 +329,6 @@ body.light #theme-toggle .icon-sun  { display: block; }
 body.light #theme-toggle .icon-moon { display: none; }
 
 /* ════════════════════════════════════════════════════════════
-   Volume control — slim slider, slides out from under audio toggle
-   ════════════════════════════════════════════════════════════ */
-#volume-control {
-  transform: translateY(-6px);
-}
-#volume-control.is-ready {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  transform: translateY(0);
-}
-.vol-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 84px;
-  height: 2px;
-  background: rgba(245, 232, 211, 0.18);
-  border-radius: 999px;
-  outline: none;
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
-}
-.vol-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #F5E8D3;
-  border: none;
-  box-shadow: 0 0 6px rgba(245, 232, 211, 0.4);
-  cursor: pointer;
-  transition: transform 0.2s var(--ease-soft);
-}
-.vol-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-.vol-slider::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #F5E8D3;
-  border: none;
-  box-shadow: 0 0 6px rgba(245, 232, 211, 0.4);
-  cursor: pointer;
-}
-body.light .vol-slider { background: rgba(60, 40, 30, 0.2); }
-body.light .vol-slider::-webkit-slider-thumb {
-  background: #3C2820;
-  box-shadow: 0 0 6px rgba(60, 40, 30, 0.3);
-}
-body.light .vol-slider::-moz-range-thumb {
-  background: #3C2820;
-  box-shadow: 0 0 6px rgba(60, 40, 30, 0.3);
-}
-
-/* ════════════════════════════════════════════════════════════
    Voice button + modal
    ════════════════════════════════════════════════════════════ */
 .voice-btn {
@@ -559,8 +504,9 @@ body.light .lang-btn.active { background: rgba(168, 130, 67, 0.2); color: #2A1F1
   .pull-quote { padding: 1rem 0.25rem; }
   .pull-quote p { font-size: 1.4rem; line-height: 1.45; }
 
-  #theme-toggle { width: 2.5rem; height: 2.5rem; top: 1rem; right: 1rem; }
-  #volume-control { top: 3.75rem; right: 1rem; }
+  #audio-toggle, #theme-toggle { width: 2.5rem; height: 2.5rem; }
+  #audio-toggle { top: 1rem; right: 1rem; }
+  #theme-toggle { top: 1rem; right: 4rem; }
   #lang-toggle  { top: 1rem; left: 1rem; padding: 2px; }
   .lang-btn { padding: 0.3rem 0.5rem; font-size: 0.65rem; }
   .lang-btn-ur { font-size: 0.78rem; padding: 0.2rem 0.45rem; }

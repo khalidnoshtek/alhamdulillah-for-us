@@ -760,7 +760,8 @@ function beginExperience() {
   }, HEART_DELAY);
   setTimeout(() => {
     document.getElementById('theme-toggle')?.classList.add('is-ready');
-    volumeControl?.classList.add('is-ready');
+    audioBtn?.style.setProperty('opacity', '1');
+    setIcons(true);
     // voice-btn intentionally NOT revealed here — it appears only on the
     // final slide, after the closing words have settled.
   }, HEART_DELAY + 800);
@@ -795,24 +796,23 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ════════════════════════════════════════════════════════════
-   Volume slider — only on-screen audio control
+   Audio toggle — mute / unmute mid-experience
    ════════════════════════════════════════════════════════════ */
-const volumeControl = document.getElementById('volume-control');
-const volumeSlider = document.getElementById('volume-slider');
+const audioBtn = document.getElementById('audio-toggle');
+const iconMuted = document.getElementById('icon-muted');
+const iconPlaying = document.getElementById('icon-playing');
 
-const savedVolume = (() => { try { return localStorage.getItem('hks-volume'); } catch (e) { return null; } })();
-if (savedVolume !== null) {
-  const v = Math.max(0, Math.min(100, parseInt(savedVolume, 10)));
-  ambient.volume = v / 100;
-  if (volumeSlider) volumeSlider.value = String(v);
+function setIcons(playing) {
+  if (playing) { iconMuted?.classList.add('hidden'); iconPlaying?.classList.remove('hidden'); }
+  else         { iconMuted?.classList.remove('hidden'); iconPlaying?.classList.add('hidden'); }
 }
 
-volumeSlider?.addEventListener('input', (e) => {
-  const v = parseInt(e.target.value, 10);
-  ambient.setVolume(v / 100);
-  try { localStorage.setItem('hks-volume', String(v)); } catch (err) {}
+audioBtn?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  haptic(30);
+  if (!ambient.playing) { ambient.start(); setIcons(true); }
+  else                  { ambient.stop();  setIcons(false); }
 });
-volumeSlider?.addEventListener('click', (e) => e.stopPropagation());
 
 /* ════════════════════════════════════════════════════════════
    Voice note modal
