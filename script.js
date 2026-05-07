@@ -710,6 +710,7 @@ function beginExperience() {
   setTimeout(() => {
     document.getElementById('audio-toggle')?.style.setProperty('opacity', '1');
     document.getElementById('theme-toggle')?.classList.add('is-ready');
+    document.getElementById('ff-btn')?.style.setProperty('opacity', '1');
     // voice-btn intentionally NOT revealed here — it appears only on the
     // final slide, after the closing words have settled.
   }, 800);
@@ -755,6 +756,13 @@ audioBtn?.addEventListener('click', (e) => {
   haptic(30);
   if (!ambient.playing) { ambient.start(); setIcons(true); }
   else                  { ambient.stop();  setIcons(false); }
+});
+
+/* Fast-forward — TEMP debug button, remove before sharing */
+document.getElementById('ff-btn')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  haptic(20);
+  show.next();
 });
 
 /* ════════════════════════════════════════════════════════════
