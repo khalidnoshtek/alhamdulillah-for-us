@@ -177,6 +177,35 @@ body {
   opacity: 0.4;
   z-index: 1;
   transform: scale(1.12);
+  /* Unifying cinematic grade — same recipe across every photo so the
+     set looks cohesive even if sources vary in white-balance / camera. */
+  filter: saturate(0.85) contrast(1.04) brightness(0.96);
+  /* Warm fallback when image URL is missing or 404s */
+  background-color: #1A1210;
+}
+body.light .slide-bg {
+  filter: saturate(0.92) contrast(1.05) brightness(1.02);
+  background-color: #E8DCC4;
+}
+
+/* Portrait frame in slide 13 — soft glow placeholder if the image is
+   missing, so the empty frame still looks intentional. */
+#portrait-img {
+  background-color: #1A1210;
+  background-image:
+    radial-gradient(ellipse at 30% 30%, rgba(201, 169, 97, 0.18), transparent 55%),
+    radial-gradient(ellipse at 70% 75%, rgba(201, 169, 97, 0.10), transparent 60%),
+    url('assets/images/portrait.jpg');
+  background-size: cover, cover, cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+body.light #portrait-img {
+  background-color: #E8DCC4;
+  background-image:
+    radial-gradient(ellipse at 30% 30%, rgba(168, 130, 67, 0.18), transparent 55%),
+    radial-gradient(ellipse at 70% 75%, rgba(168, 130, 67, 0.12), transparent 60%),
+    url('assets/images/portrait.jpg');
 }
 .slide.active .slide-bg { animation: ken-burns 22s ease-out forwards; }
 @keyframes ken-burns {
