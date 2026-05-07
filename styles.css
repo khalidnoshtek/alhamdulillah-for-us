@@ -1,6 +1,6 @@
-/* ────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════
    Base
-   ──────────────────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════════════ */
 :root {
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-smooth: cubic-bezier(0.65, 0, 0.35, 1);
@@ -22,17 +22,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
   overscroll-behavior: none;
+  transition: background-color 0.8s var(--ease-soft), color 0.8s var(--ease-soft);
 }
 
 @supports (padding: env(safe-area-inset-bottom)) {
-  #audio-toggle { top: max(1.25rem, env(safe-area-inset-top)); }
+  #audio-toggle, #theme-toggle { top: max(1.25rem, env(safe-area-inset-top)); }
+  #lang-toggle  { top: max(1.25rem, env(safe-area-inset-top)); }
   #voice-btn    { bottom: max(1.5rem, env(safe-area-inset-bottom)); }
-  #tap-hint     { bottom: max(1.25rem, env(safe-area-inset-bottom)); }
 }
 
-/* ────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════
    Atmosphere — grain + vignette
-   ──────────────────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════════════ */
 .grain {
   position: fixed;
   inset: 0;
@@ -49,14 +50,15 @@ body {
   z-index: 3;
   pointer-events: none;
   background: radial-gradient(ellipse at center, transparent 35%, rgba(8,7,5,0.55) 100%);
+  transition: background 0.8s var(--ease-soft);
 }
 
-/* ────────────────────────────────────────────────────────────
-   Entry gate
-   ──────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   Entry gate + beating heart
+   ════════════════════════════════════════════════════════════ */
 #entry-gate {
   background: radial-gradient(ellipse at center, #1A1612 0%, #080705 70%);
-  transition: opacity 1.4s var(--ease-soft);
+  transition: opacity 1.4s var(--ease-soft), background 0.8s var(--ease-soft);
 }
 #entry-gate.is-leaving {
   opacity: 0;
@@ -69,18 +71,41 @@ body {
   to   { opacity: 1; transform: none; }
 }
 
-.entry-orb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #C9A961;
-  box-shadow: 0 0 32px 6px rgba(201, 169, 97, 0.5);
+.entry-heart {
+  position: relative;
+  width: 56px;
+  height: 56px;
   margin: 0 auto;
-  animation: entry-orb 2.8s var(--ease-soft) infinite;
 }
-@keyframes entry-orb {
-  0%, 100% { transform: scale(0.8); opacity: 0.6;  box-shadow: 0 0 24px 4px  rgba(201, 169, 97, 0.4); }
-  50%      { transform: scale(1.1); opacity: 1;    box-shadow: 0 0 40px 10px rgba(201, 169, 97, 0.6); }
+.entry-heart-svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: #C9A961;
+  filter: drop-shadow(0 0 14px rgba(201, 169, 97, 0.5));
+  animation: heartbeat 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
+.entry-heart-glow {
+  position: absolute;
+  inset: -18px;
+  background: radial-gradient(ellipse, rgba(201, 169, 97, 0.5), transparent 60%);
+  filter: blur(14px);
+  animation: heartbeat-glow 1.4s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  10%      { transform: scale(1.20); }
+  20%      { transform: scale(1.02); }
+  30%      { transform: scale(1.13); }
+  40%      { transform: scale(1); }
+}
+@keyframes heartbeat-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  10%      { opacity: 0.85; transform: scale(1.15); }
+  20%      { opacity: 0.55; transform: scale(1); }
+  30%      { opacity: 0.7; transform: scale(1.08); }
+  40%      { opacity: 0.45; transform: scale(1); }
 }
 
 .entry-btn {
@@ -123,9 +148,9 @@ body {
   border-color: rgba(201, 169, 97, 0.7);
 }
 
-/* ────────────────────────────────────────────────────────────
-   Slides — full-viewport, cross-fading
-   ──────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   Slides — full-viewport cross-fade
+   ════════════════════════════════════════════════════════════ */
 .slide {
   position: absolute;
   inset: 0;
@@ -142,19 +167,8 @@ body {
   pointer-events: auto;
   z-index: 5;
 }
+.slide-inner { position: relative; z-index: 2; width: 100%; }
 
-.slide-inner {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  animation: slide-rise 2s var(--ease-soft);
-}
-@keyframes slide-rise {
-  from { transform: translateY(8px); }
-  to   { transform: translateY(0); }
-}
-
-/* Per-slide background image (Ken-Burns slow zoom) */
 .slide-bg {
   position: absolute;
   inset: 0;
@@ -164,9 +178,7 @@ body {
   z-index: 1;
   transform: scale(1.12);
 }
-.slide.active .slide-bg {
-  animation: ken-burns 22s ease-out forwards;
-}
+.slide.active .slide-bg { animation: ken-burns 22s ease-out forwards; }
 @keyframes ken-burns {
   from { transform: scale(1.08); }
   to   { transform: scale(1.22); }
@@ -178,12 +190,13 @@ body {
   background:
     linear-gradient(to bottom, rgba(15,13,11,0.55), rgba(15,13,11,0.7), rgba(15,13,11,0.85)),
     radial-gradient(ellipse at center, transparent 30%, rgba(15,13,11,0.4) 100%);
+  transition: background 0.8s var(--ease-soft);
 }
 .slide-bg-final { opacity: 0.25 !important; }
 
-/* ────────────────────────────────────────────────────────────
-   Reveal — text fade-up triggered by JS within active slide
-   ──────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   Reveal-text — fade up triggered by JS
+   ════════════════════════════════════════════════════════════ */
 .reveal-text {
   opacity: 0;
   transform: translateY(20px);
@@ -197,9 +210,24 @@ body {
   transform: translateY(0);
 }
 
-/* ────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════
+   Highlights — Allah, Hafsah, habibi, Yahya, Ibrahim, Khalid
+   ════════════════════════════════════════════════════════════ */
+.h-allah, .h-name, .h-pet, .h-kid, .h-me {
+  color: #D4B568;
+  font-weight: 500;
+  text-shadow:
+    0 0 14px rgba(201, 169, 97, 0.55),
+    0 0 28px rgba(201, 169, 97, 0.25);
+  white-space: nowrap;
+  display: inline;
+}
+.h-name, .h-pet, .h-kid, .h-me { font-style: italic; }
+.h-allah { font-weight: 600; letter-spacing: 0.015em; }
+
+/* ════════════════════════════════════════════════════════════
    Decorative ornaments
-   ──────────────────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════════════ */
 .ornament-line {
   width: 60px;
   height: 1px;
@@ -230,22 +258,58 @@ body {
   opacity: 0.7;
 }
 
-/* ────────────────────────────────────────────────────────────
-   Progress + tap hint
-   ──────────────────────────────────────────────────────────── */
 #progress.is-active { opacity: 1; }
-#tap-hint.is-visible {
-  opacity: 1;
-  animation: hint-fade 4s ease-in-out infinite;
-}
-@keyframes hint-fade {
-  0%, 100% { opacity: 0.4; }
-  50%      { opacity: 0.85; }
-}
 
-/* ────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════
+   Language toggle
+   ════════════════════════════════════════════════════════════ */
+#lang-toggle {
+  opacity: 0;
+  animation: ui-fade 1.2s var(--ease-soft) 0.6s forwards;
+}
+.lang-btn {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+  color: #A89684;
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.4s var(--ease-soft);
+  min-width: 2rem;
+}
+.lang-btn:hover { color: #E8DCC4; }
+.lang-btn.active {
+  background: rgba(201, 169, 97, 0.18);
+  color: #E8DCC4;
+}
+.lang-btn-ur {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  padding: 0.25rem 0.55rem;
+}
+@keyframes ui-fade { to { opacity: 1; } }
+
+/* ════════════════════════════════════════════════════════════
+   Theme toggle
+   ════════════════════════════════════════════════════════════ */
+#theme-toggle {
+  opacity: 0;
+  transition: opacity 1s var(--ease-soft), color 0.5s, background 0.5s;
+}
+#theme-toggle.is-ready { opacity: 1; }
+#theme-toggle .icon-sun  { display: none; }
+#theme-toggle .icon-moon { display: block; }
+body.light #theme-toggle .icon-sun  { display: block; }
+body.light #theme-toggle .icon-moon { display: none; }
+
+/* ════════════════════════════════════════════════════════════
    Voice button + modal
-   ──────────────────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════════════ */
 .voice-btn {
   opacity: 0;
   transform: translateY(20px);
@@ -276,17 +340,12 @@ body {
   50%      { opacity: 1; }
 }
 
-.voice-modal.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
+.voice-modal.is-open { opacity: 1; pointer-events: auto; }
 .voice-modal .modal-card {
   transform: translateY(20px) scale(0.96);
   transition: transform 0.6s var(--ease-soft);
 }
-.voice-modal.is-open .modal-card {
-  transform: translateY(0) scale(1);
-}
+.voice-modal.is-open .modal-card { transform: translateY(0) scale(1); }
 .modal-glow {
   position: absolute;
   inset: -20px;
@@ -296,15 +355,141 @@ body {
   z-index: -1;
 }
 
-/* ────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════
+   Urdu — Nastaliq script + RTL
+   ════════════════════════════════════════════════════════════ */
+body.lang-ur [data-i18n] {
+  font-family: 'Noto Nastaliq Urdu', 'Playfair Display', serif !important;
+  direction: rtl;
+  unicode-bidi: embed;
+  line-height: 2;
+  font-style: normal !important;
+}
+body.lang-ur [data-i18n] em,
+body.lang-ur [data-i18n] i { font-style: normal; }
+body.lang-ur .pull-quote p { line-height: 2; }
+body.lang-ur .h-allah,
+body.lang-ur .h-name,
+body.lang-ur .h-pet,
+body.lang-ur .h-kid,
+body.lang-ur .h-me {
+  font-style: normal;
+  font-family: 'Noto Nastaliq Urdu', serif;
+}
+
+/* ════════════════════════════════════════════════════════════
+   LIGHT MODE — warm parchment palette (not clinical white)
+   Kept to the same emotional warmth, just inverted in luminance.
+   ════════════════════════════════════════════════════════════ */
+body.light {
+  background-color: #F4EBD6;
+  color: #2A1F18;
+}
+body.light .vignette {
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(120, 80, 35, 0.18) 100%);
+  mix-blend-mode: multiply;
+}
+body.light .grain {
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+}
+body.light #entry-gate {
+  background: radial-gradient(ellipse at center, #F4EBD6 0%, #E8DCC4 70%);
+}
+body.light .entry-btn-inner {
+  background: rgba(60, 40, 25, 0.04);
+  border-color: rgba(168, 130, 67, 0.55);
+  color: #2A1F18;
+}
+body.light .entry-btn:hover .entry-btn-inner,
+body.light .entry-btn:active .entry-btn-inner {
+  background: rgba(60, 40, 25, 0.08);
+  border-color: rgba(168, 130, 67, 0.8);
+}
+body.light .entry-heart-svg { color: #A88243; filter: drop-shadow(0 0 12px rgba(168, 130, 67, 0.4)); }
+body.light .entry-heart-glow { background: radial-gradient(ellipse, rgba(168, 130, 67, 0.4), transparent 60%); }
+body.light .entry-btn-glow { background: radial-gradient(ellipse, rgba(168, 130, 67, 0.4), transparent 65%); }
+
+/* Tailwind utility overrides — keep emotional warmth, not pure white */
+body.light .bg-ink     { background-color: #F4EBD6; }
+body.light .bg-inkDeep { background-color: #E8DCC4; }
+body.light .text-cream { color: #2A1F18; }
+body.light .text-warm  { color: #4A372A; }
+body.light .text-muted { color: #7A604A; }
+body.light .text-gold,
+body.light [class*="text-gold"] { color: #A88243; }
+
+/* Slide-bg overlay — warm light wash instead of dark */
+body.light .slide-bg::after {
+  background:
+    linear-gradient(to bottom, rgba(244,235,214,0.45), rgba(244,235,214,0.62), rgba(244,235,214,0.78)),
+    radial-gradient(ellipse at center, transparent 30%, rgba(244,235,214,0.4) 100%);
+}
+
+/* Borders/UI surfaces in light mode */
+body.light .bg-white\/\[0\.04\] { background-color: rgba(60, 40, 25, 0.05); }
+body.light .border-white\/10   { border-color: rgba(60, 40, 25, 0.15); }
+body.light .border-gold\/30    { border-color: rgba(168, 130, 67, 0.45); }
+body.light .border-gold\/20    { border-color: rgba(168, 130, 67, 0.3); }
+body.light .border-gold\/40    { border-color: rgba(168, 130, 67, 0.55); }
+
+/* Highlights in light mode — still gold but darker for contrast */
+body.light .h-allah,
+body.light .h-name,
+body.light .h-pet,
+body.light .h-kid,
+body.light .h-me {
+  color: #8B6A2A;
+  text-shadow:
+    0 0 12px rgba(168, 130, 67, 0.35),
+    0 0 24px rgba(168, 130, 67, 0.18);
+}
+
+/* Ornaments */
+body.light .ornament-line {
+  background: linear-gradient(to right, transparent, rgba(168, 130, 67, 0.7), transparent);
+}
+body.light .pull-quote::before,
+body.light .pull-quote::after {
+  background: rgba(168, 130, 67, 0.55);
+}
+body.light .portrait-frame::before {
+  background: linear-gradient(135deg, rgba(168, 130, 67, 0.35), transparent 50%, rgba(168, 130, 67, 0.2));
+}
+
+/* Voice modal in light */
+body.light .voice-modal .modal-backdrop { background: rgba(244, 235, 214, 0.85); }
+body.light .voice-modal .bg-surface\/80 { background: rgba(232, 220, 196, 0.88); }
+body.light .voice-glow { background: radial-gradient(ellipse, rgba(168, 130, 67, 0.35), transparent 70%); }
+body.light .modal-glow { background: radial-gradient(ellipse at center, rgba(168, 130, 67, 0.25), transparent 65%); }
+body.light .bg-gold\/15 { background-color: rgba(168, 130, 67, 0.18); }
+body.light .bg-gold     { background-color: #A88243; }
+body.light .from-gold\/40 { --tw-gradient-from: rgba(168, 130, 67, 0.4); }
+body.light .via-gold      { --tw-gradient-via: #A88243; }
+body.light .to-gold\/40   { --tw-gradient-to:   rgba(168, 130, 67, 0.4); }
+body.light .from-gold\/60 { --tw-gradient-from: rgba(168, 130, 67, 0.6); }
+body.light .to-gold       { --tw-gradient-to:   #A88243; }
+
+/* Lang toggle in light */
+body.light .lang-btn { color: #7A604A; }
+body.light .lang-btn:hover { color: #2A1F18; }
+body.light .lang-btn.active { background: rgba(168, 130, 67, 0.2); color: #2A1F18; }
+
+/* ════════════════════════════════════════════════════════════
    Galaxy S23 (≈ 360 × 780 css px) tuning
-   ──────────────────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
   .reveal-text { transition-duration: 1.5s; }
   .pull-quote { padding: 1rem 0.25rem; }
   .pull-quote p { font-size: 1.4rem; line-height: 1.45; }
 
-  #audio-toggle { width: 2.5rem; height: 2.5rem; top: 1rem; right: 1rem; }
+  #audio-toggle, #theme-toggle { width: 2.5rem; height: 2.5rem; }
+  #audio-toggle { top: 1rem; right: 1rem; }
+  #theme-toggle { top: 1rem; right: 4rem; }
+  #lang-toggle  { top: 1rem; left: 1rem; padding: 2px; }
+  .lang-btn { padding: 0.3rem 0.5rem; font-size: 0.65rem; }
+  .lang-btn-ur { font-size: 0.78rem; padding: 0.2rem 0.45rem; }
+
   #voice-btn { right: 1rem; bottom: 1.25rem; }
   .voice-btn .voice-inner { padding: 0.65rem 1rem; }
   .voice-btn .voice-inner span:last-child { font-size: 0.8125rem; }
@@ -324,9 +509,9 @@ body {
   .slide-inner { transform: translateY(-2vh); }
 }
 
-/* ────────────────────────────────────────────────────────────
-   Reduced motion accessibility
-   ──────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   Reduced motion
+   ════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

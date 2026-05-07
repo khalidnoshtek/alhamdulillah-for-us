@@ -1,15 +1,292 @@
 /* ════════════════════════════════════════════════════════════
-   Procedural ambient — calm solo piano (Web Audio API)
+   I18N — translations
+   Hinglish keeps Urdu vocabulary (mohabbat, wafa, sukoon, qareeb,
+   sabr) for warmth. Urdu kept simple but eloquent.
+   ════════════════════════════════════════════════════════════ */
+const I18N = {
+  en: {
+    entry_pre: 'For Hafsah',
+    entry_title: 'Some moments<br>are best heard up close.',
+    entry_subtitle: 'Best with headphones',
+    entry_btn: "I'm wearing them",
+
+    s1_l1: 'Some love stories begin with ease.',
+    s1_l2: 'Ours survived storms.',
+    s1_l3: 'And somehow…',
+    s1_l4: 'we still chose each other.',
+    s1_birthday: 'Happy Birthday',
+    s1_name: '<span class="h-name">Hafsah</span>',
+
+    s2_l1: 'Our story was never easy.',
+    s2_l2: 'People doubted us.',
+    s2_l3: 'People tried to separate us.',
+
+    s3_l1: 'There was a time you were already my wife…',
+    s3_l2: 'but I could not even speak to you.',
+    s3_l3: 'A whole year passed.',
+    s3_l4: 'No calls.',
+    s3_l5: 'No messages.',
+    s3_l6: 'No way to know if you were okay.',
+
+    s4_l1: 'But even distance<br>could not break<br>what <span class="h-allah">Allah</span> had written.',
+
+    s5_name: '<span class="h-name">Hafsah</span>, <span class="h-pet">habibi</span>,',
+    s5_l1: 'you suffered in silence.',
+    s5_l2: 'you were hurt for choosing me.',
+    s5_l3: 'you carried pain that nobody<br>should have carried alone.',
+
+    s6_l1: 'And still…',
+    s6_l2: 'you never let go of us.',
+
+    s7_l1: 'When my health became weak…',
+    s7_l2: 'when life became heavy…',
+    s7_l3: 'you cared for me with a love<br>I cannot explain.',
+    s7_l4: 'You stayed beside me through<br>moments I had nothing to offer.',
+
+    s8_l1: 'There was a moment you told me…',
+    s8_quote: '"You can leave me<br>and start a new life."',
+    s8_l2: 'But how could I leave the one who<br>stayed loyal through everything?',
+
+    s9_l1: 'And somehow…',
+    s9_l2: 'between pain, distance,<br>responsibilities, struggle…',
+    s9_l3: 'we built a home.',
+    s9_l4: 'Not perfect. But filled with<br>loyalty, sabr, and love.',
+
+    s10_l1: 'I watched you become a mother.',
+    s10_l1_sub: '<span class="h-pet">Umm Yahya.</span>&nbsp; <span class="h-pet">Umm Ibrahim.</span>',
+    s10_l2: 'Even exhausted, you gave <span class="h-kid">Yahya</span> and <span class="h-kid">Ibrahim</span><br>warmth, patience, and love.',
+    s10_l3: 'The kids are lucky to have you.',
+    s10_l4: 'And I am lucky <span class="h-allah">Allah</span> wrote you for me.',
+
+    s11_name: '<span class="h-name">Hafsah</span>, <span class="h-pet">habibi</span>,',
+    s11_l1: 'you gave me loyalty.',
+    s11_l2: 'you gave me patience.',
+    s11_l3: 'you gave me peace<br>during my worst moments.',
+    s11_l4: 'And wallahi…',
+    s11_l5: 'I will spend my life<br>trying to honor that.',
+
+    s12_l1: 'I cannot rewrite<br>the difficult chapters.',
+    s12_l2: 'But I promise to make<br>the next chapters softer.',
+    s12_l3: 'As long as <span class="h-allah">Allah</span> keeps us together…',
+    s12_l4: 'you will never walk alone,<br><span class="h-name">Hafsah</span>.',
+
+    s13_l1: 'Alhamdulillah for us.',
+    s13_l2: 'Thank you for staying,<br><span class="h-name">Hafsah</span>.',
+    s13_signature: 'with all of me',
+    s13_name: '<span class="h-me">Khalid</span>',
+
+    voice_btn: 'One last thing…',
+    voice_pre: 'A note for you',
+    voice_title: 'One last thing…',
+    voice_body: '<span class="h-name">Hafsah</span>, there are some things<br>I could never write down.<br>So I said them out loud — for only you.'
+  },
+
+  hi: {
+    entry_pre: 'Hafsah ke liye',
+    entry_title: 'Kuch lamhe<br>qareeb hi sune jaate hain.',
+    entry_subtitle: 'Headphones ke saath behtar',
+    entry_btn: 'Pehne hain',
+
+    s1_l1: 'Kuch mohabbatein aasaani se shuru hoti hain.',
+    s1_l2: 'Hamari toofaano se guzri.',
+    s1_l3: 'Aur phir bhi…',
+    s1_l4: 'humne ek doosre ko chuna.',
+    s1_birthday: 'Salgirah Mubarak',
+    s1_name: '<span class="h-name">Hafsah</span>',
+
+    s2_l1: 'Hamari kahaani kabhi aasaan na thi.',
+    s2_l2: 'Logon ne hum par shak kiya.',
+    s2_l3: 'Logon ne humein juda karna chaha.',
+
+    s3_l1: 'Ek waqt tha jab tum meri biwi thi…',
+    s3_l2: 'magar main tumse baat bhi nahi kar sakta tha.',
+    s3_l3: 'Ek poora saal beet gaya.',
+    s3_l4: 'Koi awaaz nahi.',
+    s3_l5: 'Koi paigaam nahi.',
+    s3_l6: 'Yeh jaane ka koi raasta nahi tha ki tum theek ho.',
+
+    s4_l1: 'Magar doori bhi woh na tod saki<br>jo <span class="h-allah">Allah</span> ne likha tha.',
+
+    s5_name: '<span class="h-name">Hafsah</span>, <span class="h-pet">habibi</span>,',
+    s5_l1: 'tumne khaamosh dard sahaa.',
+    s5_l2: 'tumhe takleef hui mujhe chunne ki.',
+    s5_l3: 'tumne woh gham tanha uthaaya<br>jo kisi ko tanha nahi uthana tha.',
+
+    s6_l1: 'Aur phir bhi…',
+    s6_l2: 'tumne humein kabhi nahi chhoda.',
+
+    s7_l1: 'Jab meri sehat kamzor thi…',
+    s7_l2: 'jab zindagi bhaari thi…',
+    s7_l3: 'tumne mujhe aisi mohabbat di<br>jo bayaan nahi kar sakta.',
+    s7_l4: 'Tum mere saath tab bhi rahi<br>jab mujhmein dene ko kuch na tha.',
+
+    s8_l1: 'Ek lamha tha jab tumne kaha…',
+    s8_quote: '"Tum mujhe chhod kar<br>nayi zindagi shuru kar sakti ho."',
+    s8_l2: 'Magar main use kaise chhodta<br>jo har haal mein wafadar rahi?',
+
+    s9_l1: 'Aur phir bhi…',
+    s9_l2: 'dard, doori, zimmedaariyon<br>aur jadojahad ke darmiyaan…',
+    s9_l3: 'humne ek ghar banaaya.',
+    s9_l4: 'Mukammal nahi. Magar wafa,<br>sabr aur mohabbat se bhara.',
+
+    s10_l1: 'Maine tumhe maa banta dekha.',
+    s10_l1_sub: '<span class="h-pet">Umm Yahya.</span>&nbsp; <span class="h-pet">Umm Ibrahim.</span>',
+    s10_l2: 'Thakan ke bawajood, tumne <span class="h-kid">Yahya</span> aur <span class="h-kid">Ibrahim</span> ko<br>narmi, sabr aur mohabbat di.',
+    s10_l3: 'Bachche khushnaseeb hain ki tum unki maa ho.',
+    s10_l4: 'Aur main khushnaseeb hoon ki <span class="h-allah">Allah</span> ne tumhe mere liye likha.',
+
+    s11_name: '<span class="h-name">Hafsah</span>, <span class="h-pet">habibi</span>,',
+    s11_l1: 'tumne mujhe wafa di.',
+    s11_l2: 'tumne mujhe sabr diya.',
+    s11_l3: 'tumne mujhe meri sabse<br>buri raaton mein sukoon diya.',
+    s11_l4: 'Aur wallahi…',
+    s11_l5: 'main saari zindagi<br>iska haq ada karne mein lagaa doonga.',
+
+    s12_l1: 'Main mushkil safhe<br>dobara nahi likh sakta.',
+    s12_l2: 'Magar waada karta hoon<br>aane wale safhe narm honge.',
+    s12_l3: 'Jab tak <span class="h-allah">Allah</span> humein saath rakhe…',
+    s12_l4: 'tum kabhi tanha nahi chalogi,<br><span class="h-name">Hafsah</span>.',
+
+    s13_l1: 'Alhamdulillah hum dono ke liye.',
+    s13_l2: 'Shukriya saath nibhaane ka,<br><span class="h-name">Hafsah</span>.',
+    s13_signature: 'mere dil se',
+    s13_name: '<span class="h-me">Khalid</span>',
+
+    voice_btn: 'Ek aakhri baat…',
+    voice_pre: 'Tumhare liye',
+    voice_title: 'Ek aakhri baat…',
+    voice_body: '<span class="h-name">Hafsah</span>, kuch baatein hain<br>jo main kabhi likh na saka.<br>Toh main ne keh diya — sirf tumhare liye.'
+  },
+
+  ur: {
+    entry_pre: 'حفصہ کے لیے',
+    entry_title: 'کچھ لمحے<br>قریب ہی سنے جاتے ہیں۔',
+    entry_subtitle: 'ہیڈفون کے ساتھ بہتر',
+    entry_btn: 'پہنے ہوئے ہیں',
+
+    s1_l1: 'کچھ محبتیں آسانی سے شروع ہوتی ہیں۔',
+    s1_l2: 'ہماری طوفانوں سے گزری۔',
+    s1_l3: 'اور پھر بھی۔۔۔',
+    s1_l4: 'ہم نے ایک دوسرے کو چنا۔',
+    s1_birthday: 'سالگرہ مبارک',
+    s1_name: '<span class="h-name">حفصہ</span>',
+
+    s2_l1: 'ہماری کہانی کبھی آسان نہ تھی۔',
+    s2_l2: 'لوگوں نے ہم پر شک کیا۔',
+    s2_l3: 'لوگوں نے ہمیں جدا کرنا چاہا۔',
+
+    s3_l1: 'ایک وقت تھا جب تم میری بیوی تھی۔۔۔',
+    s3_l2: 'مگر میں تم سے بات بھی نہ کر سکتا تھا۔',
+    s3_l3: 'ایک پورا سال گزرا۔',
+    s3_l4: 'کوئی فون نہیں۔',
+    s3_l5: 'کوئی پیغام نہیں۔',
+    s3_l6: 'یہ جاننے کا کوئی راستہ نہ تھا کہ تم ٹھیک ہو۔',
+
+    s4_l1: 'مگر دوری بھی وہ نہ توڑ سکی<br>جو <span class="h-allah">اللہ</span> نے لکھا تھا۔',
+
+    s5_name: '<span class="h-name">حفصہ</span>، <span class="h-pet">حبیبی</span>،',
+    s5_l1: 'تم نے خاموشی سے درد سہا۔',
+    s5_l2: 'تمہیں مجھے چننے کی سزا ملی۔',
+    s5_l3: 'تم نے وہ غم اکیلے اٹھایا<br>جو کسی کو اکیلے نہیں اٹھانا تھا۔',
+
+    s6_l1: 'اور پھر بھی۔۔۔',
+    s6_l2: 'تم نے ہمیں نہیں چھوڑا۔',
+
+    s7_l1: 'جب میری صحت کمزور تھی۔۔۔',
+    s7_l2: 'جب زندگی بھاری تھی۔۔۔',
+    s7_l3: 'تم نے مجھے ایسی محبت دی<br>جو میں بیان نہیں کر سکتا۔',
+    s7_l4: 'تم میرے ساتھ تب بھی رہی<br>جب مجھ میں دینے کو کچھ نہ تھا۔',
+
+    s8_l1: 'ایک لمحہ تھا جب تم نے کہا۔۔۔',
+    s8_quote: '"تم مجھے چھوڑ کر<br>نئی زندگی شروع کر سکتی ہو۔"',
+    s8_l2: 'مگر میں اسے کیسے چھوڑتا<br>جو ہر حال میں وفادار رہی؟',
+
+    s9_l1: 'اور پھر بھی۔۔۔',
+    s9_l2: 'درد، دوری، ذمہ داریوں<br>اور جدوجہد کے درمیان۔۔۔',
+    s9_l3: 'ہم نے ایک گھر بنایا۔',
+    s9_l4: 'مکمل نہیں۔ مگر وفا،<br>صبر اور محبت سے بھرا۔',
+
+    s10_l1: 'میں نے تمہیں ماں بنتے دیکھا۔',
+    s10_l1_sub: '<span class="h-pet">امّ یحییٰ۔</span>&nbsp; <span class="h-pet">امّ ابراہیم۔</span>',
+    s10_l2: 'تھکن کے باوجود، تم نے <span class="h-kid">یحییٰ</span> اور <span class="h-kid">ابراہیم</span> کو<br>گرمجوشی، صبر اور محبت دی۔',
+    s10_l3: 'بچے خوش قسمت ہیں کہ تم ان کی ماں ہو۔',
+    s10_l4: 'اور میں خوش قسمت ہوں کہ <span class="h-allah">اللہ</span> نے تمہیں میرے لیے لکھا۔',
+
+    s11_name: '<span class="h-name">حفصہ</span>، <span class="h-pet">حبیبی</span>،',
+    s11_l1: 'تم نے مجھے وفا دی۔',
+    s11_l2: 'تم نے مجھے صبر دیا۔',
+    s11_l3: 'تم نے مجھے میرے بدترین<br>لمحوں میں سکون دیا۔',
+    s11_l4: 'اور واللہ۔۔۔',
+    s11_l5: 'میں ساری زندگی<br>اس کا حق ادا کرنے کی کوشش کروں گا۔',
+
+    s12_l1: 'میں مشکل صفحے<br>دوبارہ نہیں لکھ سکتا۔',
+    s12_l2: 'مگر وعدہ کرتا ہوں<br>کہ آنے والے صفحے نرم ہوں گے۔',
+    s12_l3: 'جب تک <span class="h-allah">اللہ</span> ہمیں ساتھ رکھے۔۔۔',
+    s12_l4: 'تم کبھی اکیلی نہیں چلوگی،<br><span class="h-name">حفصہ</span>۔',
+
+    s13_l1: 'الحمدللہ ہم دونوں کے لیے۔',
+    s13_l2: 'شکریہ ساتھ نبھانے کا،<br><span class="h-name">حفصہ</span>۔',
+    s13_signature: 'میرے دل سے',
+    s13_name: '<span class="h-me">خالد</span>',
+
+    voice_btn: 'ایک آخری بات۔۔۔',
+    voice_pre: 'تمہارے لیے',
+    voice_title: 'ایک آخری بات۔۔۔',
+    voice_body: '<span class="h-name">حفصہ</span>، کچھ باتیں ہیں<br>جو میں کبھی لکھ نہ سکا۔<br>تو میں نے کہہ دیں — صرف تمہارے لیے۔'
+  }
+};
+
+function applyLang(lang) {
+  document.body.classList.remove('lang-en', 'lang-hi', 'lang-ur');
+  document.body.classList.add(`lang-${lang}`);
+  document.documentElement.lang = lang === 'ur' ? 'ur' : (lang === 'hi' ? 'hi' : 'en');
+
+  const dict = I18N[lang] || I18N.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.setLang === lang);
+  });
+  try { localStorage.setItem('hks-lang', lang); } catch (e) {}
+}
+
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    applyLang(b.dataset.setLang);
+  });
+});
+
+// Boot language
+const savedLang = (() => { try { return localStorage.getItem('hks-lang'); } catch (e) { return null; } })();
+applyLang(savedLang && I18N[savedLang] ? savedLang : 'en');
+
+/* ════════════════════════════════════════════════════════════
+   Theme toggle — light mode keeps warm parchment palette
+   ════════════════════════════════════════════════════════════ */
+function applyTheme(theme) {
+  document.body.classList.toggle('light', theme === 'light');
+  try { localStorage.setItem('hks-theme', theme); } catch (e) {}
+}
+const savedTheme = (() => { try { return localStorage.getItem('hks-theme'); } catch (e) { return null; } })();
+applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+
+document.getElementById('theme-toggle')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+});
+
+/* ════════════════════════════════════════════════════════════
+   Procedural ambient — calm solo piano
    ════════════════════════════════════════════════════════════ */
 class Ambient {
   constructor() {
-    this.ctx = null;
-    this.master = null;
-    this.bus = null;
-    this.timer = null;
-    this.playing = false;
-    // Fmaj7add9 — warm, hopeful, emotionally grounded
-    this.scale = [174.61, 220.00, 261.63, 329.63, 349.23, 392.00, 440.00, 523.25];
+    this.ctx = null; this.master = null; this.bus = null;
+    this.timer = null; this.playing = false;
+    this.scale   = [174.61, 220.00, 261.63, 329.63, 349.23, 392.00, 440.00, 523.25];
     this.weights = [3, 2, 3, 2, 1, 2, 1, 1];
   }
   init() {
@@ -29,9 +306,7 @@ class Ambient {
     reverb.connect(this.master);
 
     const lp = this.ctx.createBiquadFilter();
-    lp.type = 'lowpass';
-    lp.frequency.value = 3800;
-    lp.Q.value = 0.4;
+    lp.type = 'lowpass'; lp.frequency.value = 3800; lp.Q.value = 0.4;
     lp.connect(dry); lp.connect(wet);
     this.bus = lp;
   }
@@ -41,9 +316,7 @@ class Ambient {
     const ir = this.ctx.createBuffer(2, len, sr);
     for (let ch = 0; ch < 2; ch++) {
       const d = ir.getChannelData(ch);
-      for (let i = 0; i < len; i++) {
-        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
-      }
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
     }
     return ir;
   }
@@ -130,11 +403,11 @@ class Ambient {
     if (this.timer) { clearTimeout(this.timer); this.timer = null; }
   }
 }
-
 const ambient = new Ambient();
 
 /* ════════════════════════════════════════════════════════════
-   Sky — fireflies + distant stars + occasional shooting star
+   Sky — fireflies + stars + occasional shooting star
+   Adapts colors for light vs dark mode.
    ════════════════════════════════════════════════════════════ */
 (function sky() {
   const canvas = document.getElementById('sky');
@@ -142,7 +415,6 @@ const ambient = new Ambient();
   const ctx = canvas.getContext('2d');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let w, h;
-
   function resize() {
     w = canvas.width = innerWidth * dpr;
     h = canvas.height = innerHeight * dpr;
@@ -156,8 +428,6 @@ const ambient = new Ambient();
   const FIREFLY_COUNT = isMobile ? 22 : 38;
   const STAR_COUNT    = isMobile ? 60 : 110;
 
-  // Pre-render halo sprite for performance — drawImage is much faster
-  // than recreating a radialGradient per particle per frame on mobile.
   function makeHaloSprite(rgb, size) {
     const c = document.createElement('canvas');
     c.width = c.height = size;
@@ -171,15 +441,17 @@ const ambient = new Ambient();
     cx.fillRect(0, 0, size, size);
     return c;
   }
-  const haloGold = makeHaloSprite('255, 215, 130', 96 * dpr);
-  const haloCream = makeHaloSprite('232, 220, 196', 96 * dpr);
+  // Dark-mode sprites (warm gold + cream)
+  const haloGoldDark  = makeHaloSprite('255, 215, 130', 96 * dpr);
+  const haloCreamDark = makeHaloSprite('232, 220, 196', 96 * dpr);
+  // Light-mode sprites (deeper amber so fireflies still glow on cream bg)
+  const haloGoldLight  = makeHaloSprite('168, 130, 67', 96 * dpr);
+  const haloCreamLight = makeHaloSprite('139, 106, 42', 96 * dpr);
 
-  // Fireflies — warm glowing drifters with bobbing motion
   const flies = [];
   for (let i = 0; i < FIREFLY_COUNT; i++) {
     flies.push({
-      x: Math.random() * w,
-      y: Math.random() * h,
+      x: Math.random() * w, y: Math.random() * h,
       vx: (Math.random() - 0.5) * 0.12 * dpr,
       vy: (Math.random() - 0.5) * 0.04 * dpr,
       r: (Math.random() * 1.4 + 0.5) * dpr,
@@ -193,12 +465,10 @@ const ambient = new Ambient();
     });
   }
 
-  // Distant stars — small, static, slow twinkle
   const stars = [];
   for (let i = 0; i < STAR_COUNT; i++) {
     stars.push({
-      x: Math.random() * w,
-      y: Math.random() * h * 0.85,
+      x: Math.random() * w, y: Math.random() * h * 0.85,
       r: (Math.random() * 0.7 + 0.3) * dpr,
       tw: Math.random() * Math.PI * 2,
       twSpeed: 0.005 + Math.random() * 0.012,
@@ -206,10 +476,8 @@ const ambient = new Ambient();
     });
   }
 
-  // Shooting star — occasional
   let shootingStar = null;
   let shootingTimer = 8000 + Math.random() * 12000;
-
   function spawnShooting() {
     const startX = Math.random() * w * 0.6;
     const startY = Math.random() * h * 0.4;
@@ -228,26 +496,33 @@ const ambient = new Ambient();
   function frame(now) {
     const dt = Math.min(50, now - last);
     last = now;
+    const isLight = document.body.classList.contains('light');
 
     ctx.clearRect(0, 0, w, h);
 
-    // Stars (drawn first, behind fireflies)
-    ctx.save();
-    for (const s of stars) {
-      s.tw += s.twSpeed;
-      const a = s.base * (0.5 + Math.sin(s.tw) * 0.5);
-      ctx.fillStyle = `rgba(232, 220, 196, ${a})`;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fill();
+    // Stars — only on dark sky (would disappear on cream bg)
+    if (!isLight) {
+      ctx.save();
+      for (const s of stars) {
+        s.tw += s.twSpeed;
+        const a = s.base * (0.5 + Math.sin(s.tw) * 0.5);
+        ctx.fillStyle = `rgba(232, 220, 196, ${a})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
     }
-    ctx.restore();
 
-    // Shooting star
-    shootingTimer -= dt;
-    if (shootingTimer <= 0 && !shootingStar) {
-      spawnShooting();
-      shootingTimer = 9000 + Math.random() * 16000;
+    // Shooting star — dark mode only
+    if (!isLight) {
+      shootingTimer -= dt;
+      if (shootingTimer <= 0 && !shootingStar) {
+        spawnShooting();
+        shootingTimer = 9000 + Math.random() * 16000;
+      }
+    } else {
+      shootingStar = null;
     }
     if (shootingStar) {
       const ss = shootingStar;
@@ -255,7 +530,6 @@ const ambient = new Ambient();
       ss.life -= ss.decay;
       ss.trail.unshift({ x: ss.x, y: ss.y });
       if (ss.trail.length > 18) ss.trail.pop();
-
       ctx.save();
       ctx.lineCap = 'round';
       for (let i = 0; i < ss.trail.length - 1; i++) {
@@ -268,40 +542,41 @@ const ambient = new Ambient();
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
       }
-      // Bright head
-      ctx.fillStyle = `rgba(255, 245, 220, ${ss.life})`;
+      ctx.fillStyle = `rgba(232, 220, 196, ${ss.life})`;
       ctx.beginPath();
       ctx.arc(ss.x, ss.y, 1.6 * dpr, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
-
-      if (ss.life <= 0 || ss.x > w + 60 || ss.y > h + 60) {
-        shootingStar = null;
-      }
+      if (ss.life <= 0 || ss.x > w + 60 || ss.y > h + 60) shootingStar = null;
     }
 
-    // Fireflies — additive blend for natural glow
+    // Fireflies
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalCompositeOperation = isLight ? 'multiply' : 'lighter';
+    const haloGold = isLight ? haloGoldLight : haloGoldDark;
+    const haloCream = isLight ? haloCreamLight : haloCreamDark;
+
     for (const f of flies) {
       f.x += f.vx;
       f.y += f.vy + Math.sin(f.bob) * 0.18 * dpr;
       f.bob += f.bobSpeed;
       f.tw += f.twSpeed;
-
       if (f.x < -120) f.x = w + 120;
       if (f.x > w + 120) f.x = -120;
       if (f.y < -120) f.y = h + 120;
       if (f.y > h + 120) f.y = -120;
 
-      const a = f.base * (0.35 + Math.sin(f.tw) * 0.65);
+      const a = f.base * (0.35 + Math.sin(f.tw) * 0.65) * (isLight ? 0.7 : 1);
       const halo = f.gold ? haloGold : haloCream;
       ctx.globalAlpha = a;
       ctx.drawImage(halo, f.x - f.haloSize/2, f.y - f.haloSize/2, f.haloSize, f.haloSize);
 
-      // Bright core
       ctx.globalAlpha = a * 1.2;
-      ctx.fillStyle = f.gold ? `rgba(255, 240, 190, ${a})` : `rgba(255, 250, 230, ${a})`;
+      if (isLight) {
+        ctx.fillStyle = f.gold ? `rgba(168, 130, 67, ${a})` : `rgba(120, 85, 35, ${a})`;
+      } else {
+        ctx.fillStyle = f.gold ? `rgba(255, 240, 190, ${a})` : `rgba(255, 250, 230, ${a})`;
+      }
       ctx.beginPath();
       ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
       ctx.fill();
@@ -315,7 +590,8 @@ const ambient = new Ambient();
 })();
 
 /* ════════════════════════════════════════════════════════════
-   Slide controller — auto-advance + cross-fade + tap-to-skip
+   Slide controller — auto-advance, cross-fade
+   (no tap-to-skip — strictly cinematic auto-play)
    ════════════════════════════════════════════════════════════ */
 class SlideShow {
   constructor() {
@@ -327,7 +603,6 @@ class SlideShow {
     this.activatedAt = 0;
     this.remainingOnPause = 0;
 
-    // Hydrate slide-bg elements with their image url
     this.slides.forEach(slide => {
       const bg = slide.querySelector('.slide-bg');
       if (bg) {
@@ -338,26 +613,17 @@ class SlideShow {
       }
     });
   }
-
-  start() {
-    this.go(0);
-    this.showProgress();
-  }
-
+  start() { this.go(0); document.getElementById('progress')?.classList.add('is-active'); }
   go(index) {
     if (index < 0 || index >= this.slides.length) return;
-
-    // Clear existing timers
     if (this.advanceTimer) { clearTimeout(this.advanceTimer); this.advanceTimer = null; }
     this.revealTimers.forEach(t => clearTimeout(t));
     this.revealTimers = [];
 
-    // Fade out current slide
     if (this.current >= 0) {
       const prev = this.slides[this.current];
       prev.classList.remove('active');
       const prevReveals = prev.querySelectorAll('.reveal-text');
-      // Reset reveals AFTER fade-out completes so they're not visible mid-transition
       setTimeout(() => prevReveals.forEach(el => el.classList.remove('is-visible')), 1700);
     }
 
@@ -365,26 +631,20 @@ class SlideShow {
     const slide = this.slides[index];
     slide.classList.add('active');
 
-    // Schedule internal text reveals
     const reveals = slide.querySelectorAll('.reveal-text');
     reveals.forEach(el => {
       const at = parseInt(el.dataset.revealAt || '0', 10);
       this.revealTimers.push(setTimeout(() => el.classList.add('is-visible'), at));
     });
 
-    // Schedule next slide
     this.activatedAt = performance.now();
     const dur = parseInt(slide.dataset.duration || '0', 10);
     if (dur > 0 && index < this.slides.length - 1) {
       this.advanceTimer = setTimeout(() => this.next(), dur);
     }
-
     this.updateProgress();
   }
-
   next() { if (this.current < this.slides.length - 1) this.go(this.current + 1); }
-  prev() { if (this.current > 0) this.go(this.current - 1); }
-
   pause() {
     if (this.paused) return;
     this.paused = true;
@@ -397,100 +657,58 @@ class SlideShow {
       this.advanceTimer = null;
     }
   }
-
   resume() {
     if (!this.paused) return;
     this.paused = false;
     if (this.remainingOnPause > 0 && this.current < this.slides.length - 1) {
-      this.activatedAt = performance.now() - (parseInt(this.slides[this.current].dataset.duration || '0', 10) - this.remainingOnPause);
+      const dur = parseInt(this.slides[this.current].dataset.duration || '0', 10);
+      this.activatedAt = performance.now() - (dur - this.remainingOnPause);
       this.advanceTimer = setTimeout(() => this.next(), this.remainingOnPause);
       this.remainingOnPause = 0;
     }
   }
-
-  showProgress() {
-    document.getElementById('progress')?.classList.add('is-active');
-  }
-
   updateProgress() {
     const fill = document.getElementById('progress-fill');
     if (!fill) return;
-    const pct = ((this.current + 1) / this.slides.length) * 100;
-    fill.style.width = pct + '%';
+    fill.style.width = ((this.current + 1) / this.slides.length) * 100 + '%';
   }
 }
-
 const show = new SlideShow();
 
 /* ════════════════════════════════════════════════════════════
-   Entry gate — first user interaction, starts everything
+   Entry gate — first user gesture, kicks everything off
    ════════════════════════════════════════════════════════════ */
 const entryGate = document.getElementById('entry-gate');
 const entryStart = document.getElementById('entry-start');
-const entrySilent = document.getElementById('entry-silent');
 
-function beginExperience({ withSound }) {
+function beginExperience() {
   entryGate.classList.add('is-leaving');
   setTimeout(() => entryGate.style.display = 'none', 1500);
-
-  // Reveal floating UI
   setTimeout(() => {
     document.getElementById('audio-toggle')?.style.setProperty('opacity', '1');
+    document.getElementById('theme-toggle')?.classList.add('is-ready');
     document.getElementById('voice-btn')?.classList.add('is-ready');
   }, 800);
-
-  // Tap hint after a moment so users know they can advance
-  setTimeout(() => document.getElementById('tap-hint')?.classList.add('is-visible'), 6000);
-
-  // Start music (off by default for the silent path)
-  if (withSound) {
-    ambient.start();
-    setIcons(true);
-  } else {
-    setIcons(false);
-  }
-
+  ambient.start();
+  setIcons(true);
   show.start();
 }
-
-entryStart?.addEventListener('click', () => beginExperience({ withSound: true }));
-entrySilent?.addEventListener('click', () => beginExperience({ withSound: false }));
+entryStart?.addEventListener('click', beginExperience);
 
 /* ════════════════════════════════════════════════════════════
-   Audio toggle (mute / unmute mid-experience)
+   Audio toggle — mute/unmute mid-experience
    ════════════════════════════════════════════════════════════ */
 const audioBtn = document.getElementById('audio-toggle');
 const iconMuted = document.getElementById('icon-muted');
 const iconPlaying = document.getElementById('icon-playing');
-
 function setIcons(playing) {
   if (playing) { iconMuted?.classList.add('hidden'); iconPlaying?.classList.remove('hidden'); }
   else         { iconMuted?.classList.remove('hidden'); iconPlaying?.classList.add('hidden'); }
 }
-
 audioBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
   if (!ambient.playing) { ambient.start(); setIcons(true); }
   else                  { ambient.stop();  setIcons(false); }
-});
-
-/* ════════════════════════════════════════════════════════════
-   Tap-to-advance — anywhere except buttons/modal
-   ════════════════════════════════════════════════════════════ */
-const tapZone = document.getElementById('tap-zone');
-tapZone?.addEventListener('click', () => {
-  if (entryGate && !entryGate.classList.contains('is-leaving')) return;
-  if (document.getElementById('voice-modal')?.classList.contains('is-open')) return;
-  show.next();
-  // Hide tap hint once user has tapped
-  document.getElementById('tap-hint')?.classList.remove('is-visible');
-});
-
-// Keyboard: arrow keys for desktop control
-document.addEventListener('keydown', (e) => {
-  if (entryGate && !entryGate.classList.contains('is-leaving')) return;
-  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); show.next(); }
-  if (e.key === 'ArrowLeft')  { e.preventDefault(); show.prev(); }
 });
 
 /* ════════════════════════════════════════════════════════════
@@ -509,7 +727,6 @@ const currentEl = document.getElementById('voice-current');
 const durationEl = document.getElementById('voice-duration');
 
 let ambientWasPlayingBeforeModal = false;
-
 function fmtTime(t) {
   if (!isFinite(t)) return '0:00';
   const m = Math.floor(t / 60);
@@ -539,7 +756,6 @@ function closeModal() {
   }
   show.resume();
 }
-
 voiceBtn?.addEventListener('click', (e) => { e.stopPropagation(); openModal(); });
 voiceClose?.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
 voiceModal?.addEventListener('click', (e) => {
@@ -548,7 +764,6 @@ voiceModal?.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && voiceModal?.classList.contains('is-open')) closeModal();
 });
-
 voicePlay?.addEventListener('click', (e) => {
   e.stopPropagation();
   if (voiceAudio.paused) {
