@@ -353,20 +353,32 @@ class Ambient {
     if (this.playing) this.fade(this.volume, 200);
   }
   init() {
-    if (this.ctx) return;
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    this.ctx = new Ctx();
+    if (this.master) return;        // fully initialized
+    if (!this.ctx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new Ctx();
+    }
     this.master = this.ctx.createGain();
     this.master.gain.value = 0;
     this.master.connect(this.ctx.destination);
 
+    // Soft limiter — prevents the harsh noise when 2-3 notes burst at once
+    // and the reverb tail piles up past 0dB
+    const limiter = this.ctx.createDynamicsCompressor();
+    limiter.threshold.value = -10;
+    limiter.knee.value = 6;
+    limiter.ratio.value = 12;
+    limiter.attack.value = 0.003;
+    limiter.release.value = 0.15;
+    limiter.connect(this.master);
+
     const reverb = this.ctx.createConvolver();
     reverb.buffer = this.makeIR(3.6, 2.2);
-    const dry = this.ctx.createGain(); dry.gain.value = 0.55;
-    const wet = this.ctx.createGain(); wet.gain.value = 0.7;
-    dry.connect(this.master);
+    const dry = this.ctx.createGain(); dry.gain.value = 0.5;
+    const wet = this.ctx.createGain(); wet.gain.value = 0.6;
+    dry.connect(limiter);
     wet.connect(reverb);
-    reverb.connect(this.master);
+    reverb.connect(limiter);
 
     const lp = this.ctx.createBiquadFilter();
     lp.type = 'lowpass'; lp.frequency.value = 3800; lp.Q.value = 0.4;
@@ -397,7 +409,7 @@ class Ambient {
     const dur = 5.5 + Math.random() * 3;
     const env = ctx.createGain();
     env.gain.setValueAtTime(0, time);
-    env.gain.linearRampToValueAtTime(0.42, time + 0.04);
+    env.gain.linearRampToValueAtTime(0.34, time + 0.04);
     env.gain.exponentialRampToValueAtTime(0.0001, time + dur);
 
     const o1 = ctx.createOscillator();
@@ -493,6 +505,67 @@ class Ambient {
   }
 }
 const ambient = new Ambient();
+
+/* ════════════════════════════════════════════════════════════
+   Heart — synced thump audio for the entry icon.
+   The CSS animation `heartbeat 1.4s` peaks at 10% (lub) and 30% (dub).
+   We phase-lock audio to the running visual, so the first thump lands
+   on the next visible peak rather than fighting it.
+   ════════════════════════════════════════════════════════════ */
+const heartAnimT0 = performance.now();   // ~when the CSS heartbeat begins (script runs at end of body)
+
+class Heart {
+  constructor() { this.ctx = null; this.master = null; }
+  init() {
+    if (this.master) return;
+    if (ambient.ctx) {
+      this.ctx = ambient.ctx;
+    } else {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new Ctx();
+      ambient.ctx = this.ctx;        // share so Ambient.init() picks up the same one
+    }
+    this.master = this.ctx.createGain();
+    this.master.gain.value = 0.5;
+    this.master.connect(this.ctx.destination);
+  }
+  thump(time, intensity) {
+    const o = this.ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(85, time);
+    o.frequency.exponentialRampToValueAtTime(34, time + 0.18);
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0, time);
+    g.gain.linearRampToValueAtTime(intensity, time + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.001, time + 0.32);
+    o.connect(g); g.connect(this.master);
+    o.start(time); o.stop(time + 0.4);
+  }
+  async start(numBeats = 3) {
+    this.init();
+    if (this.ctx.state === 'suspended') await this.ctx.resume();
+
+    // Phase-align to the CSS animation (lub at 140ms into each 1400ms cycle)
+    const elapsed = performance.now() - heartAnimT0;
+    const phase   = elapsed % 1400;
+    let msToNextLub = 140 - phase;
+    if (msToNextLub < 30) msToNextLub += 1400;   // 30ms scheduling buffer
+
+    const t0 = this.ctx.currentTime + msToNextLub / 1000;
+    this.master.gain.cancelScheduledValues(this.ctx.currentTime);
+    this.master.gain.setValueAtTime(0.55, this.ctx.currentTime);
+
+    for (let i = 0; i < numBeats; i++) {
+      const c = t0 + i * 1.4;
+      this.thump(c,         0.9);    // lub
+      this.thump(c + 0.28,  0.6);    // dub (matches @keyframes peak at 30% = 280ms after lub)
+    }
+    const fadeStart = t0 + (numBeats - 1) * 1.4 + 0.7;
+    this.master.gain.setValueAtTime(0.55, fadeStart);
+    this.master.gain.exponentialRampToValueAtTime(0.001, fadeStart + 0.7);
+  }
+}
+const heart = new Heart();
 
 /* ════════════════════════════════════════════════════════════
    Sky — fireflies + stars + occasional shooting star
@@ -792,6 +865,7 @@ function beginExperience() {
     // voice-btn intentionally NOT revealed here — it appears only on the
     // final slide, after the closing words have settled.
   }, 800);
+  heart.start();          // 3 thumps in sync with the visible heart icon
   ambient.start();
   setIcons(true);
   show.start();
