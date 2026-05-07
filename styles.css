@@ -26,7 +26,7 @@ body {
 }
 
 @supports (padding: env(safe-area-inset-bottom)) {
-  #audio-toggle, #theme-toggle { top: max(1.25rem, env(safe-area-inset-top)); }
+  #theme-toggle { top: max(1.25rem, env(safe-area-inset-top)); }
   #lang-toggle  { top: max(1.25rem, env(safe-area-inset-top)); }
   #voice-btn    { bottom: max(1.5rem, env(safe-area-inset-bottom)); }
 }
@@ -184,30 +184,6 @@ body.light .slide-bg {
   filter: saturate(0.95) contrast(1.05) brightness(1.05);
   background-color: #E8DCC4;
 }
-/* Mother slide — show the full frame (no side cropping), held still.
-   Pairs with .slide-bg-backdrop (injected by JS) which fills the screen
-   with a blurred copy of the same image, so the slide feels fullscreen
-   without cropping any of the kids. */
-.slide-bg-contain {
-  background-size: contain !important;
-  background-repeat: no-repeat;
-  transform: scale(1) !important;
-  animation: none !important;
-  background-color: transparent !important;  /* let backdrop show through */
-  opacity: 1 !important;                     /* sharp photo over the soft backdrop */
-}
-.slide-bg-contain::after { display: none; }   /* skip the dark vignette over a contained image */
-.slide-bg-backdrop {
-  position: absolute;
-  inset: 0;
-  background-position: center;
-  background-size: cover;
-  filter: blur(40px) brightness(0.55) saturate(1.05);
-  transform: scale(1.15);                     /* hide blur edges from the blur algorithm */
-  z-index: 0;                                 /* sits below .slide-bg (z:1) and .slide-inner (z:2) */
-  opacity: 0.9;
-}
-body.light .slide-bg-backdrop { filter: blur(40px) brightness(1.1) saturate(0.9); opacity: 0.7; }
 .slide.active .slide-bg { animation: ken-burns 22s ease-out forwards; }
 @keyframes ken-burns {
   from { transform: scale(1.0); }
@@ -407,41 +383,6 @@ body.light .vol-slider::-moz-range-thumb {
   box-shadow: 0 0 6px rgba(60, 40, 30, 0.3);
 }
 
-/* Source A/B toggle (Piano | Kina) */
-.src-btn {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(245, 232, 211, 0.45);
-  padding: 0.2rem 0.55rem;
-  background: transparent;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color 0.4s var(--ease-soft), background 0.4s var(--ease-soft);
-}
-.src-btn:hover { color: rgba(245, 232, 211, 0.8); }
-.src-btn.is-active { color: #F5E8D3; background: rgba(245, 232, 211, 0.08); }
-.src-btn.is-unavailable {
-  color: rgba(245, 232, 211, 0.18);
-  cursor: not-allowed;
-  text-decoration: line-through;
-  text-decoration-thickness: 1px;
-}
-.src-btn.is-unavailable:hover { color: rgba(245, 232, 211, 0.25); }
-body.light .src-btn.is-unavailable { color: rgba(60, 40, 30, 0.22); }
-body.light .src-btn.is-unavailable:hover { color: rgba(60, 40, 30, 0.3); }
-.src-divider {
-  font-size: 0.6rem;
-  color: rgba(245, 232, 211, 0.18);
-  user-select: none;
-}
-body.light .src-btn { color: rgba(60, 40, 30, 0.5); }
-body.light .src-btn:hover { color: rgba(60, 40, 30, 0.85); }
-body.light .src-btn.is-active { color: #3C2820; background: rgba(60, 40, 30, 0.08); }
-body.light .src-divider { color: rgba(60, 40, 30, 0.2); }
-
 /* ════════════════════════════════════════════════════════════
    Voice button + modal
    ════════════════════════════════════════════════════════════ */
@@ -618,9 +559,7 @@ body.light .lang-btn.active { background: rgba(168, 130, 67, 0.2); color: #2A1F1
   .pull-quote { padding: 1rem 0.25rem; }
   .pull-quote p { font-size: 1.4rem; line-height: 1.45; }
 
-  #audio-toggle, #theme-toggle { width: 2.5rem; height: 2.5rem; }
-  #audio-toggle { top: 1rem; right: 1rem; }
-  #theme-toggle { top: 1rem; right: 4rem; }
+  #theme-toggle { width: 2.5rem; height: 2.5rem; top: 1rem; right: 1rem; }
   #volume-control { top: 3.75rem; right: 1rem; }
   #lang-toggle  { top: 1rem; left: 1rem; padding: 2px; }
   .lang-btn { padding: 0.3rem 0.5rem; font-size: 0.65rem; }

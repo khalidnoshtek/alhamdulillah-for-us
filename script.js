@@ -299,49 +299,12 @@ class Ambient {
   constructor() {
     this.ctx = null; this.master = null; this.bus = null;
     this.timer = null; this.playing = false;
-    this.mode = 'procedural';    // 'procedural' or 'kina'
-    this.kinaAudio = null;
     this.volume = 0.32;          // 0..1
     this.scale   = [174.61, 220.00, 261.63, 329.63, 349.23, 392.00, 440.00, 523.25];
     this.weights = [3, 2, 3, 2, 1, 2, 1, 1];
   }
-  async loadKina() {
-    if (this.kinaAudio) return this.kinaAudio;
-    return new Promise((resolve) => {
-      const a = new Audio();
-      a.loop = true;
-      a.preload = 'auto';
-      const done = (val) => { resolve(val); a.removeEventListener('canplaythrough', onOK); a.removeEventListener('error', onErr); };
-      const onOK  = () => { this.kinaAudio = a; done(a); };
-      const onErr = () => done(null);
-      a.addEventListener('canplaythrough', onOK, { once: true });
-      a.addEventListener('error',          onErr, { once: true });
-      a.src = 'assets/audio/kina.mp3';
-      setTimeout(() => { if (!this.kinaAudio) done(null); }, 4000);
-    });
-  }
-  async setMode(mode) {
-    if (mode === this.mode) return true;
-    if (mode === 'kina') {
-      const ok = await this.loadKina();
-      if (!ok) return false;  // file missing — caller should snap UI back
-    }
-    const wasPlaying = this.playing;
-    if (wasPlaying) this.stop();
-    this.mode = mode;
-    if (wasPlaying) setTimeout(() => this.start(), 120);
-    return true;
-  }
   fade(target, ms) {
-    if (this.mode === 'kina' && this.kinaAudio) {
-      const start = this.kinaAudio.volume, t0 = performance.now();
-      const step = (t) => {
-        const k = Math.min(1, (t - t0) / ms);
-        this.kinaAudio.volume = start + (target - start) * k;
-        if (k < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    } else if (this.master) {
+    if (this.master) {
       const now = this.ctx.currentTime;
       this.master.gain.cancelScheduledValues(now);
       this.master.gain.setValueAtTime(this.master.gain.value, now);
@@ -456,20 +419,6 @@ class Ambient {
     this.timer = setTimeout(() => this.scheduleLoop(), gap * 1000);
   }
   async start() {
-    if (this.mode === 'kina') {
-      const kina = await this.loadKina();
-      if (kina) {
-        try {
-          kina.volume = 0;
-          await kina.play();
-          this.playing = true;
-          this.fade(this.volume, 4000);
-          return;
-        } catch (e) { /* play() blocked */ return; }
-      }
-      // fall through to procedural if kina file missing
-      this.mode = 'procedural';
-    }
     this.init();
     if (this.ctx.state === 'suspended') await this.ctx.resume();
     const now = this.ctx.currentTime;
@@ -483,18 +432,6 @@ class Ambient {
     }
   }
   stop() {
-    if (this.mode === 'kina' && this.kinaAudio) {
-      const start = this.kinaAudio.volume, t0 = performance.now(), dur = 2500;
-      const step = (t) => {
-        const k = Math.min(1, (t - t0) / dur);
-        this.kinaAudio.volume = start * (1 - k);
-        if (k < 1) requestAnimationFrame(step);
-        else this.kinaAudio.pause();
-      };
-      requestAnimationFrame(step);
-      this.playing = false;
-      return;
-    }
     if (!this.ctx) return;
     const now = this.ctx.currentTime;
     this.master.gain.cancelScheduledValues(now);
@@ -507,77 +444,24 @@ class Ambient {
 const ambient = new Ambient();
 
 /* ════════════════════════════════════════════════════════════
-   Heart — thump audio fired on entry tap. Browsers can't autoplay
-   pre-gesture, so it carries the user across the threshold instead
-   of trying to play under the silently-beating icon.
+   Heart — pre-rendered MP3 played on entry tap. WebAudio synthesis
+   was inconsistent across devices (phone bass roll-off, iOS quirks).
+   A static file plays anywhere reliably.
    ════════════════════════════════════════════════════════════ */
-class Heart {
-  constructor() { this.ctx = null; this.master = null; }
-  init() {
-    if (this.master) return;
-    if (ambient.ctx) {
-      this.ctx = ambient.ctx;
-    } else {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      this.ctx = new Ctx();
-      ambient.ctx = this.ctx;        // share so Ambient.init() picks up the same one
-    }
-    this.master = this.ctx.createGain();
-    this.master.gain.value = 0.5;
-    this.master.connect(this.ctx.destination);
-  }
-  thump(time, intensity) {
-    // Body: sine swept 180Hz -> 80Hz. Stays inside the audible range of
-    // phone speakers (which usually roll off below ~120Hz). Old version
-    // bottomed out at 34Hz and was inaudible on phones.
-    const o = this.ctx.createOscillator();
-    o.type = 'sine';
-    o.frequency.setValueAtTime(180, time);
-    o.frequency.exponentialRampToValueAtTime(80, time + 0.18);
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0, time);
-    g.gain.linearRampToValueAtTime(intensity, time + 0.010);
-    g.gain.exponentialRampToValueAtTime(0.001, time + 0.32);
-    o.connect(g); g.connect(this.master);
-    o.start(time); o.stop(time + 0.4);
-
-    // Click: short noise transient gives the thump a percussive front
-    // so the brain reads it as a heartbeat, not a tone.
-    const noise = this.ctx.createBufferSource();
-    const len = Math.floor(this.ctx.sampleRate * 0.04);
-    const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
-    noise.buffer = buf;
-    const lp = this.ctx.createBiquadFilter();
-    lp.type = 'lowpass'; lp.frequency.value = 700; lp.Q.value = 0.9;
-    const ng = this.ctx.createGain();
-    ng.gain.setValueAtTime(intensity * 0.55, time);
-    ng.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
-    noise.connect(lp); lp.connect(ng); ng.connect(this.master);
-    noise.start(time);
-  }
-  async start(numBeats = 3) {
-    this.init();
-    if (this.ctx.state === 'suspended') await this.ctx.resume();
-
-    // Fire immediately on tap — the heart icon is fading anyway, perfect
-    // sync isn't worth a 1.4s delay where the audio plays after the visual is gone.
-    const t0 = this.ctx.currentTime + 0.05;
-    this.master.gain.cancelScheduledValues(this.ctx.currentTime);
-    this.master.gain.setValueAtTime(0.55, this.ctx.currentTime);
-
-    for (let i = 0; i < numBeats; i++) {
-      const c = t0 + i * 1.4;
-      this.thump(c,         0.9);    // lub
-      this.thump(c + 0.28,  0.6);    // dub (matches @keyframes peak at 30% = 280ms after lub)
-    }
-    const fadeStart = t0 + (numBeats - 1) * 1.4 + 0.7;
-    this.master.gain.setValueAtTime(0.55, fadeStart);
-    this.master.gain.exponentialRampToValueAtTime(0.001, fadeStart + 0.7);
-  }
-}
-const heart = new Heart();
+const heart = (() => {
+  const audio = new Audio('assets/audio/heartbeat.mp3');
+  audio.preload = 'auto';
+  audio.volume = 0.9;
+  return {
+    start() {
+      try {
+        audio.currentTime = 0;
+        const p = audio.play();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    },
+  };
+})();
 
 /* ════════════════════════════════════════════════════════════
    Sky — fireflies + stars + occasional shooting star
@@ -777,18 +661,14 @@ class SlideShow {
     this.activatedAt = 0;
     this.remainingOnPause = 0;
 
-    // Apply background-image to every layer (slide-bg AND slide-bg-backdrop).
     this.slides.forEach(slide => {
-      slide.querySelectorAll('[data-image]').forEach((el) => {
-        const url = el.dataset.image;
-        if (url) el.style.backgroundImage = `url('${url}')`;
-      });
       const bg = slide.querySelector('.slide-bg');
-      if (bg) {
-        const blur = parseFloat(bg.dataset.blur || '0');
-        const base = 'saturate(0.92) contrast(1.04) brightness(1.02)';
-        bg.style.filter = blur > 0 ? `${base} blur(${blur}px)` : base;
-      }
+      if (!bg) return;
+      const url = bg.dataset.image;
+      const blur = parseFloat(bg.dataset.blur || '0');
+      if (url) bg.style.backgroundImage = `url('${url}')`;
+      const base = 'saturate(0.92) contrast(1.04) brightness(1.02)';
+      bg.style.filter = blur > 0 ? `${base} blur(${blur}px)` : base;
     });
   }
   start() { this.go(0); document.getElementById('progress')?.classList.add('is-active'); }
@@ -871,7 +751,7 @@ const entryStart = document.getElementById('entry-start');
 
 function beginExperience() {
   // Heartbeat moment: user taps -> hears + sees the heart for 1.6s
-  // (one full beat fully visible) before the gate begins fading.
+  // before the gate begins fading.
   heart.start();
   const HEART_DELAY = 1600;
   setTimeout(() => {
@@ -879,9 +759,8 @@ function beginExperience() {
     setTimeout(() => entryGate.style.display = 'none', 1500);
   }, HEART_DELAY);
   setTimeout(() => {
-    document.getElementById('audio-toggle')?.style.setProperty('opacity', '1');
     document.getElementById('theme-toggle')?.classList.add('is-ready');
-    document.getElementById('ff-btn')?.style.setProperty('opacity', '1');
+    volumeControl?.classList.add('is-ready');
     // voice-btn intentionally NOT revealed here — it appears only on the
     // final slide, after the closing words have settled.
   }, HEART_DELAY + 800);
@@ -889,7 +768,6 @@ function beginExperience() {
   // lives on its own before the experience proper begins.
   setTimeout(() => {
     ambient.start();
-    setIcons(true);
     show.start();
   }, HEART_DELAY);
   requestWakeLock();
@@ -917,11 +795,8 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ════════════════════════════════════════════════════════════
-   Audio toggle — mute/unmute mid-experience
+   Volume slider — only on-screen audio control
    ════════════════════════════════════════════════════════════ */
-const audioBtn = document.getElementById('audio-toggle');
-const iconMuted = document.getElementById('icon-muted');
-const iconPlaying = document.getElementById('icon-playing');
 const volumeControl = document.getElementById('volume-control');
 const volumeSlider = document.getElementById('volume-slider');
 
@@ -931,67 +806,6 @@ if (savedVolume !== null) {
   ambient.volume = v / 100;
   if (volumeSlider) volumeSlider.value = String(v);
 }
-const savedSource = (() => { try { return localStorage.getItem('hks-audio-source'); } catch (e) { return null; } })();
-if (savedSource === 'kina' || savedSource === 'procedural') ambient.mode = savedSource;
-
-const srcButtons = document.querySelectorAll('.src-btn');
-const kinaBtn = document.querySelector('.src-btn[data-source="kina"]');
-function paintSourceButtons(active) {
-  srcButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.source === active));
-}
-paintSourceButtons(ambient.mode);
-
-// Pre-flight check: is assets/audio/kina.mp3 present? If not, mark Kina disabled
-// up-front so the button doesn't silently revert when clicked.
-fetch('assets/audio/kina.mp3', { method: 'HEAD' })
-  .then((r) => {
-    if (!r.ok) throw new Error('missing');
-  })
-  .catch(() => {
-    if (kinaBtn) {
-      kinaBtn.classList.add('is-unavailable');
-      kinaBtn.title = 'Add assets/audio/kina.mp3 to enable';
-    }
-    if (ambient.mode === 'kina') {
-      ambient.mode = 'procedural';
-      paintSourceButtons('procedural');
-    }
-  });
-
-srcButtons.forEach((btn) => {
-  btn.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    if (btn.classList.contains('is-unavailable')) { haptic(15); return; }
-    haptic(20);
-    const target = btn.dataset.source;
-    if (target === ambient.mode) return;
-    paintSourceButtons(target);  // optimistic
-    const ok = await ambient.setMode(target);
-    if (!ok) {
-      paintSourceButtons(ambient.mode);
-      btn.classList.add('is-unavailable');
-      btn.title = 'Add assets/audio/kina.mp3 to enable';
-    } else {
-      try { localStorage.setItem('hks-audio-source', target); } catch (err) {}
-    }
-  });
-});
-
-function setIcons(playing) {
-  if (playing) {
-    iconMuted?.classList.add('hidden'); iconPlaying?.classList.remove('hidden');
-    volumeControl?.classList.add('is-ready');
-  } else {
-    iconMuted?.classList.remove('hidden'); iconPlaying?.classList.add('hidden');
-    volumeControl?.classList.remove('is-ready');
-  }
-}
-audioBtn?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  haptic(30);
-  if (!ambient.playing) { ambient.start(); setIcons(true); }
-  else                  { ambient.stop();  setIcons(false); }
-});
 
 volumeSlider?.addEventListener('input', (e) => {
   const v = parseInt(e.target.value, 10);
@@ -999,13 +813,6 @@ volumeSlider?.addEventListener('input', (e) => {
   try { localStorage.setItem('hks-volume', String(v)); } catch (err) {}
 });
 volumeSlider?.addEventListener('click', (e) => e.stopPropagation());
-
-/* Fast-forward — TEMP debug button, remove before sharing */
-document.getElementById('ff-btn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  haptic(20);
-  show.next();
-});
 
 /* ════════════════════════════════════════════════════════════
    Voice note modal
@@ -1035,7 +842,6 @@ function openModal() {
   if (ambient.playing) {
     ambientWasPlayingBeforeModal = true;
     ambient.stop();
-    setIcons(false);
   }
 }
 function closeModal() {
@@ -1048,7 +854,6 @@ function closeModal() {
   if (ambientWasPlayingBeforeModal) {
     ambientWasPlayingBeforeModal = false;
     ambient.start();
-    setIcons(true);
   }
   show.resume();
 }
